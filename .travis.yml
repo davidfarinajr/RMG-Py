@@ -1,8 +1,14 @@
+sudo: false
 language: python
 python:
   - "2.7"
 virtualenv:
     system_site_packages: true
+cache:
+  apt: true
+  pip: true
+  directories:
+  - rdkit
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install git build-essential gfortran python-dev liblapack-dev python-openbabel python-setuptools python-pip
@@ -25,9 +31,9 @@ before_install:
   - cd External/INCHI-API
   - ./download-inchi.sh
   - cd ../../
-  - mkdir build
+  - mkdir -p build
   - cd build
-  - mkdir $RDBASE/External/java_lib
+  - mkdir -p $RDBASE/External/java_lib
   - cp /usr/share/java/junit.jar $RDBASE/External/java_lib
   - ls -l $RDBASE/External/java_lib
   - cmake .. -DRDK_BUILD_INCHI_SUPPORT=ON
@@ -37,8 +43,8 @@ before_install:
   - cd ..
 install:
   - cd $TRAVIS_BUILD_DIR
-  - pip install numpy
-  - pip install -r requirements.txt
+  - pip install --upgrade numpy
+  - pip install --upgrade -r requirements.txt
   - cd ..
   - cd PyDAS
   - cd daspk31
