@@ -39,6 +39,7 @@ install:
   - cd $TRAVIS_BUILD_DIR
   - pip install numpy
   - pip install -r requirements.txt
+  - pip install --upgrade nose
   - cd ..
   - cd PyDAS
   - cd daspk31
