@@ -27,6 +27,6 @@ install:
 
 script: 
   - ls /home/travis/anaconda/opt/mopac/
-  - export LD_LIBRARY_PATH=/home/travis/anaconda/opt/mopac/:$LD_LIBRARY_PATH; ldd /home/travis/anaconda/opt/mopac/MOPAC2012.exe
+  - ldd /home/travis/anaconda/opt/mopac/MOPAC2012.exe
   - ls /home/travis/anaconda/lib
-  - export LD_LIBRARY_PATH=/home/travis/anaconda/opt/mopac/:$LD_LIBRARY_PATH; mopac
+  - mopac
