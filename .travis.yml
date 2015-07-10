@@ -26,4 +26,7 @@ install:
   - which mopac
 
 script: 
+  - ls /home/travis/anaconda/opt/mopac/
+  - ldd /home/travis/anaconda/opt/mopac/MOPAC2012.exe
+  - ls /home/travis/anaconda/lib
   - mopac
