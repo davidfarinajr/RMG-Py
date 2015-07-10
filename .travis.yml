@@ -20,17 +20,10 @@ before_install:
   - export PATH=/home/travis/anaconda/bin:$PATH
   # Update conda itself
   - conda update --yes conda
-  - cd ..
-  - git clone https://github.com/ReactionMechanismGenerator/RMG-database.git
-  - cd RMG-Py
 
 install:
-  - conda env create 
-  - source activate rmg
-  - mopac 
-  - make
+  - conda install --yes -c rmg mopac
+  - which mopac
 
 script: 
-  - make test
-  - make eg1
-  - make eg4
+  - mopac
