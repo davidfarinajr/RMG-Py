@@ -1508,7 +1508,7 @@ def writeKineticsEntry(reaction, speciesList, verbose = True, javaLibrary = Fals
         if verbose:
             if reaction.kinetics.comment:
                 for line in reaction.kinetics.comment.split("\n"):
-                    string += "! {0}\n".format(line) 
+                    string += "! {0}\n".format(line)
         for kinetics in reaction.kinetics.arrhenius:
             if isinstance(reaction,LibraryReaction):
                 new_reaction = LibraryReaction( index=reaction.index,
@@ -1578,7 +1578,7 @@ def writeKineticsEntry(reaction, speciesList, verbose = True, javaLibrary = Fals
                 if len(line) > 150:
                     short_lines = textwrap.fill(line,150).split("\n")
                     for short_line in short_lines:
-                        string += "! {0}\n".format(short_line) 
+                        string += "! {0}\n".format(short_line)
                 else:
                     string += "! {0}\n".format(line)                               
     
@@ -1860,7 +1860,20 @@ def saveChemkinFile(path, species, reactions, verbose = True, checkForDuplicates
     global __chemkin_reaction_count
     __chemkin_reaction_count = 0
     for rxn in reactions:
-        f.write(writeKineticsEntry(rxn, speciesList=species, verbose=verbose))
+        output_string = writeKineticsEntry(rxn, speciesList=species, verbose=verbose)
+        string_split = output_string.split('\n')
+        if len(string_split) <= 20:
+            f.write(writeKineticsEntry(rxn, speciesList=species, verbose=verbose))
+        else:
+            for index, line in enumerate(string_split):
+                if 'Estimated using template' in line:
+                    index_e = index
+                    break
+                else:
+                    index_e = 3
+            reduced_string_list = string_split[:20-(len(string_split)-index_e)] + ['! More templates are ignored...'] + string_split[(index_e-len(string_split)):]
+            reduced_string = '\n'.join(reduced_string_list)
+            f.write(reduced_string)
         # Don't forget to mark duplicates!
         f.write('\n')
     f.write('END\n\n')
