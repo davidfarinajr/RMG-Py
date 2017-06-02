@@ -126,6 +126,8 @@ if __name__ == '__main__':
 
     logging.info(rmgpy.settings.report())
 
+    logging.info("This is Yawei's version of RMG!!")
+
     output_dir = args.output_directory
     kwargs = {
         'scratch_directory': args.scratch_directory,
