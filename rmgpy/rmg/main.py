@@ -575,8 +575,9 @@ class RMG(util.Subject):
                 
             self.done = True
             objectsToEnlarge = []
-            allTerminated = True
+            terminatedSystems = [None] * len(self.reactionSystems)  # will be list of booleans eg. [True, False, False]
             numCoreSpecies = len(self.reactionModel.core.species)
+
             for index, reactionSystem in enumerate(self.reactionSystems):
                 
                 # Conduct simulation
@@ -622,7 +623,7 @@ class RMG(util.Subject):
                 self.reactionModel.surfaceSpecies = surfaceSpecies
                 self.reactionModel.surfaceReactions = surfaceReactions
 
-                allTerminated = allTerminated and terminated
+                terminatedSystems[index] = terminated
                 logging.info('')
                 
                 # If simulation is invalid, note which species should be added to
@@ -649,14 +650,23 @@ class RMG(util.Subject):
     
     
             if not self.done: # There is something that needs exploring/enlarging
-                
+
                 # If we reached our termination conditions, then try to prune
                 # species from the edge
-                if allTerminated:
-                    self.reactionModel.prune(self.reactionSystems, self.fluxToleranceKeepInEdge, self.maximumEdgeSpecies, self.minSpeciesExistIterationsForPrune)
+                if all(terminatedSystems):
+                    logging.info("All reaction systems reached termination criteria, so attempting pruning")
+                    self.reactionModel.prune(self.reactionSystems,
+                                             self.fluxToleranceKeepInEdge,
+                                             self.maximumEdgeSpecies,
+                                             self.minSpeciesExistIterationsForPrune)
                     # Perform garbage collection after pruning
                     collected = gc.collect()
                     logging.info('Garbage collector: collected %d objects.' % (collected))
+                else:
+                    logging.info(
+                        "Reaction system(s) {} were interrupted before reaching termination, so not pruning this iteration".format(
+                            ", ".join(str(i + 1) for i, x in enumerate(terminatedSystems) if x == False)
+                        ))
     
                 # Enlarge objects identified by the simulation for enlarging
                 # These should be Species or Network objects
