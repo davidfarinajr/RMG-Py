@@ -439,7 +439,7 @@ cdef class ReactionSystem(DASx):
         productIndices= self.productIndices
         reactantIndices = self.reactantIndices
         
-        sortedIndices = numpy.flipud(numpy.argsort(arr))
+        sortedIndices = numpy.argsort(arr)[::-1]
         
         for index in sortedIndices:
             for j in productIndices[index+numCoreReactions]:
