@@ -81,7 +81,7 @@ class ScanLog(object):
         'cm^-1': 1.0/(constants.h * constants.c * 100. * constants.Na),
         'hartree': 1.0/(constants.E_h * constants.Na),
     }
-        
+
     def __init__(self, path):
         self.path = path
 
@@ -93,17 +93,17 @@ class ScanLog(object):
         angles = []; energies = []
         angleUnits = None; energyUnits = None
         angleFactor = None; energyFactor = None
-        
+
         with open(self.path, 'r') as stream:
             for line in stream:
                 line = line.strip()
                 if line == '': continue
-                
+
                 tokens = line.split()
                 if angleUnits is None or energyUnits is None:
                     angleUnits = tokens[1][1:-1]
                     energyUnits = tokens[3][1:-1]
-                    
+
                     try:
                         angleFactor = ScanLog.angleFactors[angleUnits]
                     except KeyError:
@@ -112,17 +112,17 @@ class ScanLog(object):
                         energyFactor = ScanLog.energyFactors[energyUnits]
                     except KeyError:
                         raise ValueError('Invalid energy units {0!r}.'.format(energyUnits))
-            
+
                 else:
                     angles.append(float(tokens[0]) / angleFactor)
                     energies.append(float(tokens[1]) / energyFactor)
-        
+
         angles = numpy.array(angles)
         energies = numpy.array(energies)
         energies -= energies[0]
-        
+
         return angles, energies
-        
+
     def save(self, angles, energies, angleUnits='radians', energyUnits='kJ/mol'):
         """
         Save the scan energies to the file using the given `angles` in radians
@@ -130,7 +130,7 @@ class ScanLog(object):
         use the given `angleUnits` for angles and `energyUnits` for energies.
         """
         assert len(angles) == len(energies)
-        
+
         try:
             angleFactor = ScanLog.angleFactors[angleUnits]
         except KeyError:
@@ -139,7 +139,7 @@ class ScanLog(object):
             energyFactor = ScanLog.energyFactors[energyUnits]
         except KeyError:
             raise ValueError('Invalid energy units {0!r}.'.format(energyUnits))
-        
+
         with open(self.path, 'w') as stream:
             stream.write('{0:>24} {1:>24}\n'.format(
                 'Angle ({0})'.format(angleUnits),
@@ -681,6 +681,8 @@ def applyEnergyCorrections(E0, modelChemistry, atoms, bonds,
                 atomEnergies = {'H':-0.499946213243 + SOC['H'], 'N':-54.526406291655 + SOC['N'], 'O':-74.995458316117+ SOC['O'], 'C':-37.788203485235+ SOC['C']}
             elif modelChemistry == 'ccsd(t)-f12/cc-pvdz-f12_h-qz':
                 atomEnergies = {'H':-0.499994558325 + SOC['H'], 'N':-54.526406291655 + SOC['N'], 'O':-74.995458316117+ SOC['O'], 'C':-37.788203485235+ SOC['C']}
+            elif modelChemistry == 'ccsd(t)/aug-cc-pv(d,t)z//m06-2x/aug-cc-pvtz':
+                atomEnergies = {'H':-0.49998777297075814+ SOC['H'], 'Cl':-459.709483518952 + SOC['Cl'], 'O':-75.005452028965+ SOC['O'], 'C':-37.790518178129+ SOC['C']}
 
             # We are assuming that SOC is included in the Bond Energy Corrections
             elif modelChemistry == 'ccsd(t)-f12/cc-pvdz-f12':
@@ -839,6 +841,10 @@ def applyEnergyCorrections(E0, modelChemistry, atoms, bonds,
                 'O-H':  0.07, 'C-O': 0.25, 'C=O': -0.03, 'O-O': 0.26, 'C-N': -0.20,
                 'C=N': -0.30, 'C#N': -1.33, 'N-O': 1.01, 'N_O': -0.03, 'N=O': -0.26,
                 'N-H':  0.06, 'N-N': -0.23, 'N=N': -0.37, 'N#N': -0.64,}
+        elif modelChemistry == 'ccsd(t)/aug-cc-pv(d,t)z//m06-2x/aug-cc-pvtz'':
+            bondEnergies = {'C-H': 0.46, 'C-C': -0.28, 'C=C': -1.47,
+                'O-H':  -0.73, 'C-O': -0.55, 'C=O': -2.19, 'O-O': -0.51,
+                'H-Cl': 0.0, 'C-Cl':-0.78,'O-Cl':-0.62, 'Cl-Cl':-1.76, 'C-C aromatic':-0.51}
         elif modelChemistry == 'cbs-qb3':
             bondEnergies = {
                 'C-H': -0.11, 'C-C': -0.30, 'C=C': -0.08, 'C#C': -0.64, 'O-H' : 0.02, 'C-O': 0.33, 'C=O': 0.55,  # Table IX: Petersson GA (1998) J. of Chemical Physics, DOI: 10.1063/1.477794
@@ -1078,12 +1084,12 @@ def projectRotors(conformer, F, rotors, linear, TS):
 
     for i in range(3*Natoms-external):
         eigM[i,i]=eig[i]
- 
+
     Fm=numpy.dot(Vmw,numpy.dot(eigM,Vmw.T))
 
     # Internal rotations are not normal modes => project them on the normal modes and orthogonalize
     # Dintproj =  (3N-6) x (3N) x (3N) x (Nrotors)
-    Dintproj=numpy.dot(Vmw.T,Dint)    
+    Dintproj=numpy.dot(Vmw.T,Dint)
 
     # Reconstruct Dint
     for i in range(Nrotors):
@@ -1109,7 +1115,7 @@ def projectRotors(conformer, F, rotors, linear, TS):
     Dintproj=numpy.dot(Vmw.T,Dint)
     Proj = numpy.dot(Dint, Dint.T)
     I = numpy.identity(Natoms*3, numpy.float64)
-    Proj = I - Proj 
+    Proj = I - Proj
     Fm=numpy.dot(Proj, numpy.dot(Fm,Proj))
     # Get eigenvalues of mass-weighted force constant matrix
     eig, V = numpy.linalg.eigh(Fm)
@@ -1123,7 +1129,7 @@ def projectRotors(conformer, F, rotors, linear, TS):
         with numpy.warnings.catch_warnings():
             numpy.warnings.filterwarnings('ignore', r'invalid value encountered in sqrt')
             logging.debug(numpy.sqrt(eig[i])/(2 * math.pi * constants.c * 100))
-        
+
     return numpy.sqrt(eig[-Nvib:]) / (2 * math.pi * constants.c * 100)
 
 
