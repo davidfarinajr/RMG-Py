@@ -50,6 +50,7 @@ from rmgpy.statmech.torsion import Torsion, HinderedRotor, FreeRotor
 from rmgpy.statmech.conformer import Conformer
 from rmgpy.exceptions import InputError
 from rmgpy.quantity import Quantity
+from rmgpy.molecule.molecule import Molecule
 
 from arkane.output import prettify
 from arkane.gaussian import GaussianLog
@@ -57,6 +58,8 @@ from arkane.molpro import MolproLog
 from arkane.qchem import QChemLog
 from arkane.common import symbol_by_number
 from arkane.common import ArkaneSpecies
+from arkane.isodesmic import IsodesmicScheme, ErrorCancelingSpecies
+from arkane.thermo import ThermoJob
 
 ################################################################################
 
@@ -171,15 +174,15 @@ class StatMechJob(object):
         self.modelChemistry = ''
         self.frequencyScaleFactor = 1.0
         self.includeHinderedRotors = True
+        self.useIsodesmicReactions = False
+        self.isodesmicCorrection = None
         self.applyAtomEnergyCorrections = True
         self.applyBondEnergyCorrections = True
         self.atomEnergies = None
         self.supporting_info = [self.species.label]
         self.bonds = None
-
-        if isinstance(species, Species):
-            # Currently we do not dump and load transition states in YAML form
-            self.arkane_species = ArkaneSpecies(species=species)
+        self.arkane_species = ArkaneSpecies(species=species)
+        self.smiles_string = None
 
     def execute(self, outputFile=None, plot=False, pdep=False):
         """
@@ -200,15 +203,22 @@ class StatMechJob(object):
         species object.
         """
         path = self.path
-        TS = isinstance(self.species, TransitionState)
+        is_ts = isinstance(self.species, TransitionState)
         _, file_extension = os.path.splitext(path)
         if file_extension in ['.yml', '.yaml']:
-            if TS:
-                raise NotImplementedError('Loading transition states from a YAML file is still unsupported.')
             self.arkane_species.load_yaml(path=path, species=self.species, pdep=pdep)
             self.species.conformer = self.arkane_species.conformer
-            self.species.transportData = self.arkane_species.transport_data
-            self.species.energyTransferModel = self.arkane_species.energy_transfer_model
+            if is_ts:
+                self.species.frequency = self.arkane_species.imaginary_frequency
+            else:
+                self.species.transportData = self.arkane_species.transport_data
+                self.species.energyTransferModel = self.arkane_species.energy_transfer_model
+                if self.arkane_species.adjacency_list is not None:
+                    self.species.molecule = [Molecule().fromAdjacencyList(adjlist=self.arkane_species.adjacency_list)]
+                elif self.arkane_species.inchi is not None:
+                    self.species.molecule = [Molecule().fromInChI(inchistr=self.arkane_species.inchi)]
+                elif self.arkane_species.smiles is not None:
+                    self.species.molecule = [Molecule().fromSMILES(smilesstr=self.arkane_species.smiles)]
             return
 
         logging.info('Loading statistical mechanics parameters for {0}...'.format(self.species.label))
@@ -400,7 +410,7 @@ class StatMechJob(object):
                 E0 = energyLog.loadEnergy(self.frequencyScaleFactor)
             else:
                 E0 = E0 * constants.E_h * constants.Na         # Hartree/particle to J/mol
-            if not self.applyAtomEnergyCorrections:
+            if (not self.applyAtomEnergyCorrections) and (not self.useIsodesmicReactions):
                 logging.warning('Atom corrections are not being used. Do not trust energies and thermo.')
             E0 = applyEnergyCorrections(E0,
                                         self.modelChemistry,
@@ -408,7 +418,10 @@ class StatMechJob(object):
                                         self.bonds,
                                         atomEnergies=self.atomEnergies,
                                         applyAtomEnergyCorrections=self.applyAtomEnergyCorrections,
-                                        applyBondEnergyCorrections=self.applyBondEnergyCorrections)
+                                        applyBondEnergyCorrections=self.applyBondEnergyCorrections,
+                                        useIsodesmicReactions=self.useIsodesmicReactions,
+                                        isodesmicCorrection=self.isodesmicCorrection,
+                                        )
             if len(number) > 1:
                 ZPE = statmechLog.loadZeroPointEnergy() * self.frequencyScaleFactor
             else:
@@ -425,7 +438,7 @@ class StatMechJob(object):
         conformer.E0 = (E0_withZPE*0.001,"kJ/mol")
 
         # If loading a transition state, also read the imaginary frequency
-        if TS:
+        if is_ts:
             neg_freq = statmechLog.loadNegativeFrequency()
             self.species.frequency = (neg_freq * self.frequencyScaleFactor, "cm^-1")
             self.supporting_info.append(neg_freq)
@@ -523,7 +536,7 @@ class StatMechJob(object):
                         rotorCount += 1
 
             logging.debug('    Determining frequencies from reduced force constant matrix...')
-            frequencies = numpy.array(projectRotors(conformer, F, rotors, linear, TS))
+            frequencies = numpy.array(projectRotors(conformer, F, rotors, linear, is_ts))
 
         elif len(conformer.modes) > 2:
             if len(rotors) > 0:
@@ -548,6 +561,25 @@ class StatMechJob(object):
 
         self.species.conformer = conformer
 
+        if self.useIsodesmicReactions and (self.isodesmicCorrection is None):
+            uncorrected_thermo_job = ThermoJob(species=self.species, thermoClass='nasa')
+            uncorrected_thermo_job.generateThermo()
+
+            uncorrected_thermo = self.species.thermo.getEnthalpy(298)
+
+            # Set the species thermo to None so that it re-generates the second time through
+            self.species.thermo = None
+
+            scheme = IsodesmicScheme(target=ErrorCancelingSpecies(Molecule().fromSMILES(self.smiles_string),
+                                                                  (uncorrected_thermo, 'J/mol')),
+                                     model_chemistry=self.modelChemistry)
+            isodesmic_thermo = scheme.calculate_target_enthalpy()
+
+            # Set the difference as the isodesmic EO correction and re-run the statmech job
+            self.isodesmicCorrection = isodesmic_thermo.value_si - uncorrected_thermo
+            self.load(pdep)
+            return
+
     def save(self, outputFile):
         """
         Save the results of the statistical mechanics job to the file located
@@ -558,7 +590,6 @@ class StatMechJob(object):
         f = open(outputFile, 'a')
 
         conformer = self.species.conformer
-
         coordinates = conformer.coordinates.value_si * 1e10
         number = conformer.number.value_si
 
@@ -625,7 +656,8 @@ class StatMechJob(object):
 
 
 def applyEnergyCorrections(E0, modelChemistry, atoms, bonds,
-                           atomEnergies=None, applyAtomEnergyCorrections=True, applyBondEnergyCorrections=False):
+                           atomEnergies=None, applyAtomEnergyCorrections=True, applyBondEnergyCorrections=False,
+                           useIsodesmicReactions=False, isodesmicCorrection=None):
     """
     Given an energy `E0` in J/mol as read from the output of a quantum chemistry
     calculation at a given `modelChemistry`, adjust the energy such that it
@@ -640,6 +672,12 @@ def applyEnergyCorrections(E0, modelChemistry, atoms, bonds,
     `bonds` is a dictionary associating bond types with the number
     of that bond in the molecule.
     """
+
+    if useIsodesmicReactions:
+        if isodesmicCorrection:
+            return E0+isodesmicCorrection
+        else:
+            return E0
 
     if applyAtomEnergyCorrections:
         # Spin orbit correction (SOC) in Hartrees
@@ -912,7 +950,7 @@ class Log(object):
         self.software_log = software_log
 
 
-def projectRotors(conformer, F, rotors, linear, TS):
+def projectRotors(conformer, F, rotors, linear, is_ts):
     """
     For a given `conformer` with associated force constant matrix `F`, lists of
     rotor information `rotors`, `pivots`, and `top1`, and the linearity of the
@@ -926,7 +964,7 @@ def projectRotors(conformer, F, rotors, linear, TS):
 
     Nrotors = len(rotors)
     Natoms = len(conformer.mass.value)
-    Nvib = 3 * Natoms - (5 if linear else 6) - Nrotors - (1 if (TS) else 0)
+    Nvib = 3 * Natoms - (5 if linear else 6) - Nrotors - (1 if (is_ts) else 0)
     mass = conformer.mass.value_si
     coordinates = conformer.coordinates.getValue()
 
