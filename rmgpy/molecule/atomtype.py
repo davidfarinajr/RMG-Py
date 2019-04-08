@@ -31,7 +31,7 @@
 """
 This module defines the atom types that are available for representing
 molecular functional groups and substructure patterns. Each available atom type
-is defined as an instance of the :class:`AtomType` class. The atom types 
+is defined as an instance of the :class:`AtomType` class. The atom types
 themselves are available in the ``atomTypes`` module-level variable, or as
 the return value from the :meth:`getAtomType()` method.
 
@@ -83,7 +83,7 @@ class AtomType:
     =================== =================== ====================================
 
     """
-    
+
 
     def __init__(self, label='', generic=None, specific=None,
                  single=None,
@@ -201,7 +201,7 @@ class AtomType:
         atom type `atomType2` or ``False``  otherwise.
         """
         return self is other or self in other.specific
-    
+
     def getFeatures(self):
         """
         Returns a list of the features that are checked to determine atomtype
@@ -241,7 +241,7 @@ atomTypes = {}
 atomTypes['R']    = AtomType(label='R', generic=[], specific=[
     'H',
     'R!H',
-    'Val4','Val5','Val6','Val7',    
+    'Val4','Val5','Val6','Val7',
     'He','Ne','Ar',
     'C','Ca','Cs','Csc','Cd','CO','CS','Cdd','Cdc','Ct','Cb','Cbf','Cq','C2s','C2sc','C2d','C2dc','C2tc',
     'N','N0sc','N1s','N1sc','N1dc','N3s','N3sc','N3d','N3t','N3b','N5sc','N5dc','N5ddc','N5dddc','N5tc','N5b','N5bd',
@@ -250,7 +250,8 @@ atomTypes['R']    = AtomType(label='R', generic=[], specific=[
     'S','Sa','S0sc','S2s','S2sc','S2d','S2dc','S2tc','S4s','S4sc','S4d','S4dd','S4dc','S4b','S4t','S4tdc','S6s','S6sc','S6d','S6dd','S6ddd','S6dc','S6t','S6td','S6tt','S6tdc',
     'Cl','Cl1s',
     'I','I1s',
-    'F','F1s'])
+    'F','F1s',
+    'Br','Br1s'])
 
 atomTypes['R!H']  = AtomType(label='R!H', generic=['R'], specific=[
     'Val4','Val5','Val6','Val7',
@@ -262,7 +263,8 @@ atomTypes['R!H']  = AtomType(label='R!H', generic=['R'], specific=[
     'S','Sa','S0sc','S2s','S2sc','S2d','S2dc','S2tc','S4s','S4sc','S4d','S4dd','S4dc','S4b','S4t','S4tdc','S6s','S6sc','S6d','S6dd','S6ddd','S6dc','S6t','S6td','S6tt','S6tdc',
     'Cl','Cl1s',
     'I','I1s',
-    'F','F1s'])
+    'F','F1s'
+    'Br','Br1s'])
 
 atomTypes['Val4'] = AtomType(label='Val4', generic=['R','R!H'], specific=[
     'C','Ca','Cs','Csc','Cd','CO','CS','Cq','Cdd','Cdc','Ct','Cb','Cbf','C2s','C2sc','C2d','C2dc','C2tc',
@@ -278,7 +280,8 @@ atomTypes['Val6'] = AtomType(label='Val6', generic=['R','R!H'], specific=[
 atomTypes['Val7'] = AtomType(label='Val7', generic=['R','R!H'], specific=[
     'Cl','Cl1s',
     'I','I1s',
-    'F','F1s'])
+    'F','F1s',
+    'Br','Br1s'])
 
 atomTypes['H'   ] = AtomType('H',    generic=['R'],            specific=[])
 
@@ -535,6 +538,11 @@ atomTypes['F1s'] = AtomType('F1s', generic=['R','R!H','F','Val7'],  specific=[],
                              single=[0,1], allDouble=[0], rDouble=[], oDouble=[], sDouble=[], triple=[0], benzene=[0], lonePairs=[3], charge=[0])
 # examples for F1s: HF, [F], FO, CH3F, F2
 
+atomTypes['Br'  ] = AtomType('Br',   generic=['R','R!H','Val7'],      specific=['Br1s'])
+atomTypes['Br1s'] = AtomType('Br1s', generic=['R','R!H','Br','Val7'],  specific=[],
+                             single=[0,1], allDouble=[0], rDouble=[], oDouble=[], sDouble=[], triple=[0], benzene=[0], lonePairs=[3], charge=[0])
+# examples for Br1s: HBr, [Br], BrO, CH3Br, Br2
+
 atomTypes['R'   ].setActions(incrementBond=['R'],            decrementBond=['R'],            formBond=['R'],         breakBond=['R'],         incrementRadical=['R'],    decrementRadical=['R'],    incrementLonePair=['R'],   decrementLonePair=['R'])
 atomTypes['R!H' ].setActions(incrementBond=['R!H'],          decrementBond=['R!H'],          formBond=['R!H'],       breakBond=['R!H'],       incrementRadical=['R!H'],  decrementRadical=['R!H'],  incrementLonePair=['R!H'], decrementLonePair=['R!H'])
 atomTypes['Val4'].setActions(incrementBond=['Val4'],         decrementBond=['Val4'],         formBond=['Val4'],      breakBond=['Val4'],      incrementRadical=['Val4'], decrementRadical=['Val4'], incrementLonePair=['Val4'],decrementLonePair=['Val4'])
@@ -643,6 +651,9 @@ atomTypes['I1s'].setActions(incrementBond=[],               decrementBond=[],   
 
 atomTypes['F'  ].setActions(incrementBond=[],               decrementBond=[],               formBond=['F'],        breakBond=['F'],        incrementRadical=['F'],   decrementRadical=['F'],   incrementLonePair=[],      decrementLonePair=[])
 atomTypes['F1s'].setActions(incrementBond=[],               decrementBond=[],               formBond=['F1s'],      breakBond=['F1s'],      incrementRadical=['F1s'], decrementRadical=['F1s'], incrementLonePair=[],      decrementLonePair=[])
+
+atomTypes['Br'  ].setActions(incrementBond=[],               decrementBond=[],               formBond=['Br'],        breakBond=['Br'],        incrementRadical=['Br'],   decrementRadical=['Br'],   incrementLonePair=[],      decrementLonePair=[])
+atomTypes['Br1s'].setActions(incrementBond=[],               decrementBond=[],               formBond=['Br1s'],      breakBond=['Br1s'],      incrementRadical=['Br1s'], decrementRadical=['Br1s'], incrementLonePair=[],      decrementLonePair=[])
 
 #these are ordered on priority of picking if we encounter a more general atomType for make
 allElements=['H', 'C', 'O', 'N', 'S', 'Si', 'Cl', 'Ne', 'Ar', 'He',]
