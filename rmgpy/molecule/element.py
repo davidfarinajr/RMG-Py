@@ -30,10 +30,10 @@
 
 """
 This module defined the chemical elements available in RMG. Information for
-each element is stored as attributes of an object of the :class:`Element` 
-class. 
+each element is stored as attributes of an object of the :class:`Element`
+class.
 
-Element objects for each chemical element (1-112) have also been declared as 
+Element objects for each chemical element (1-112) have also been declared as
 module-level variables, using each element's symbol as its variable name. The
 :meth:`getElement` method can also be used to retrieve the :class:`Element`
 object associated with an atomic number or symbol. Generally applications will
@@ -63,11 +63,11 @@ class Element:
     `isotope`     ``int``         The isotope integer of the element
     `chemkinName` ``str``         The chemkin compatible representation of the element
     ============= =============== ================================================
-    
+
     This class is specifically for properties that all atoms of the same element
     share. Ideally there is only one instance of this class for each element.
     """
-    
+
     def __init__(self, number, symbol, name, mass, isotope=-1, chemkinName=None):
         self.number = number
         self.symbol = intern(symbol)
@@ -81,13 +81,13 @@ class Element:
             import logging
             logging.error("RDkit doesn't know element {0} so covalent radius unknown".format(symbol))
             self.covRadius = 0
-    
+
     def __str__(self):
         """
         Return a human-readable string representation of the object.
         """
         return self.symbol
-    
+
     def __repr__(self):
         """
         Return a representation that can be used to reconstruct the object.
@@ -102,13 +102,13 @@ class Element:
 
 class PeriodicSystem(object):
     """
-    Collects hard-coded information of elements in periodic table. 
+    Collects hard-coded information of elements in periodic table.
 
     Currently it has static attributes:
-    `valences`: the number of bonds an element is able to form around it. 
+    `valences`: the number of bonds an element is able to form around it.
     `valence_electrons`: the number of electrons in  the outermost shell of the element that can
     participate in bond formation. for instance, `S` has 6 outermost electrons (valence_electrons)
-    but 4 of them form lone pairs, the remaining 2 electrons can form bonds so the normal valence 
+    but 4 of them form lone pairs, the remaining 2 electrons can form bonds so the normal valence
     for `S` is 2.
     `lone_pairs`: the number of lone pairs an element has
     'electronegativity': The atom's electronegativity (how well can an atom attract electrons), taken from
@@ -116,12 +116,12 @@ class PeriodicSystem(object):
     isotops of the same element may have slight different electronegativities, which is not reflected below
     """
 
-    valences          = {'H': 1, 'He': 0, 'C': 4, 'N': 3, 'O': 2, 'F': 1, 'Ne': 0, 'Si': 4, 'S': 2, 'Cl': 1, 'Ar': 0, 'I': 1}
-    valence_electrons = {'H': 1, 'He': 2, 'C': 4, 'N': 5, 'O': 6, 'F': 7, 'Ne': 8, 'Si': 4, 'S': 6, 'Cl': 7, 'Ar': 8, 'I': 7}
-    lone_pairs        = {'H': 0, 'He': 1, 'C': 0, 'N': 1, 'O': 2, 'F': 3, 'Ne': 4, 'Si': 0, 'S': 2, 'Cl': 3, 'Ar': 4, 'I': 3}
+    valences          = {'H': 1, 'He': 0, 'C': 4, 'N': 3, 'O': 2, 'F': 1, 'Ne': 0, 'Si': 4, 'S': 2, 'Cl': 1, 'Ar': 0, 'Br': 0, 'I': 1}
+    valence_electrons = {'H': 1, 'He': 2, 'C': 4, 'N': 5, 'O': 6, 'F': 7, 'Ne': 8, 'Si': 4, 'S': 6, 'Cl': 7, 'Ar': 8, 'Br': 7, 'I': 7}
+    lone_pairs        = {'H': 0, 'He': 1, 'C': 0, 'N': 1, 'O': 2, 'F': 3, 'Ne': 4, 'Si': 0, 'S': 2, 'Cl': 3, 'Ar': 4, 'Br': 3,'I': 3}
     electronegativity = {'H': 2.20, 'D': 2.20, 'T': 2.20, 'C': 2.55, 'C13': 2.55, 'N': 3.04, 'O': 3.44, 'O18': 3.44,
-                         'F': 3.98, 'Si': 1.90, 'S': 2.58, 'Cl': 3.16, 'I': 2.66}
-    
+                         'F': 3.98, 'Si': 1.90, 'S': 2.58, 'Cl': 3.16, 'Br': 2.96, 'I': 2.66}
+
 ################################################################################
 
 def getElement(value, isotope=-1):
@@ -158,7 +158,7 @@ def getElement(value, isotope=-1):
 # Declare an instance of each element (1 to 112)
 # The variable names correspond to each element's symbol
 # The elements are sorted by increasing atomic number and grouped by period
-# Recommended IUPAC nomenclature is used throughout (including 'aluminium' and 
+# Recommended IUPAC nomenclature is used throughout (including 'aluminium' and
 # 'caesium')
 
 # Period 1
@@ -206,7 +206,7 @@ Zn = Element(30,  'Zn', 'zinc'          , 0.065409)
 Ga = Element(31,  'Ga', 'gallium'       , 0.069723)
 Ge = Element(32,  'Ge', 'germanium'     , 0.07264)
 As = Element(33,  'As', 'arsenic'       , 0.07492160)
-Se = Element(34,  'Se', 'selenium'      , 0.07896)  
+Se = Element(34,  'Se', 'selenium'      , 0.07896)
 Br = Element(35,  'Br', 'bromine'       , 0.079904)
 Kr = Element(36,  'Kr', 'krypton'       , 0.083798)
 
