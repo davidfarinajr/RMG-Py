@@ -656,7 +656,7 @@ atomTypes['Br'  ].setActions(incrementBond=[],               decrementBond=[],  
 atomTypes['Br1s'].setActions(incrementBond=[],               decrementBond=[],               formBond=['Br1s'],      breakBond=['Br1s'],      incrementRadical=['Br1s'], decrementRadical=['Br1s'], incrementLonePair=[],      decrementLonePair=[])
 
 #these are ordered on priority of picking if we encounter a more general atomType for make
-allElements=['H', 'C', 'O', 'N', 'S', 'Si', 'Cl', 'Ne', 'Ar', 'He',]
+allElements=['H', 'C', 'O', 'N', 'S', 'Si', 'Cl', 'F', 'Br', 'Ne', 'Ar', 'He',]
 #list of elements that do not have more specific atomTypes
 nonSpecifics=['H', 'He', 'Ne', 'Ar',]
 
