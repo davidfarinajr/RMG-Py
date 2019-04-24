@@ -44,13 +44,13 @@ class TestAtomType(unittest.TestCase):
     """
     Contains unit tests of the AtomType class.
     """
-    
+
     def setUp(self):
         """
         A function run before each unit test in this class.
         """
         self.atomType = rmgpy.molecule.atomtype.atomTypes['Cd']
-        
+
     def testPickle(self):
         """
         Test that an AtomType object can be successfully pickled and
@@ -83,7 +83,7 @@ class TestAtomType(unittest.TestCase):
         self.assertEqual(len(self.atomType.decrementRadical), len(atomType.decrementRadical))
         for item1, item2 in zip(self.atomType.decrementRadical, atomType.decrementRadical):
             self.assertEqual(item1.label, item2.label)
-    
+
     def testOutput(self):
         """
         Test that we can reconstruct an AtomType object from its repr()
@@ -92,19 +92,19 @@ class TestAtomType(unittest.TestCase):
         exec('atomType = rmgpy.molecule.atomtype.atomTypes[{0!r}]'.format(
                                     self.atomType.__repr__().split('"')[1]))
         return self.atomType.equivalent(atomType)
-    
+
     def testEquivalent(self):
         """
         Test the AtomType.equivalent() method.
         """
         return self.atomType.equivalent(rmgpy.molecule.atomtype.atomTypes['Cd'])
-    
+
     def testIsSpecficCaseOf(self):
         """
         Test the AtomType.isSpecificCaseOf() method.
         """
         return self.atomType.isSpecificCaseOf(rmgpy.molecule.atomtype.atomTypes['C'])
-    
+
     def testSetActions(self):
         """
         Test the AtomType.setActions() method.
@@ -131,7 +131,7 @@ class TestGetAtomType(unittest.TestCase):
     """
     Contains unit tests of the getAtomType() method.
     """
-    
+
     def setUp(self):
         """
         A function run before each unit test in this class.
@@ -165,32 +165,32 @@ class TestGetAtomType(unittest.TestCase):
                                                     2 H u0 p0 {1,S}
                                                     3 H u0 p0 {1,S}
                                                     4 H u0 p0 {1,S}''')
-        
+
         self.mol10 = Molecule().fromAdjacencyList('''1 N u1 p1 {2,S} {3,S}
                                                      2 H u0 p0 {1,S}
                                                      3 H u0 p0 {1,S}''')
-        
+
         self.mol11 = Molecule().fromAdjacencyList('''1 N u2 p1 {2,S}
                                                      2 H u0 p0 {1,S}''')
-        
+
         self.mol12 = Molecule().fromAdjacencyList('''1 N u0 p1 {2,T}
                                                      2 C u1 p0 {1,T}''')
-        
+
         self.mol14 = Molecule().fromAdjacencyList('''1 N u0 p2 c-1 {2,D}
                                                      2 N u0 p0 c+1 {1,D} {3,D}
                                                      3 O u0 p2 {2,D}''')
-        
+
         self.mol15 = Molecule().fromAdjacencyList('''1 N u0 p1 c0 {2,T}
                                                      2 N u0 p0 c+1 {1,T} {3,S}
                                                      3 O u0 p3 c-1 {2,S}''')
-        
+
         self.mol16 = Molecule().fromAdjacencyList('''1 N u0 p1 {2,D} {3,S}
                                                      2 O u0 p2 {1,D}
                                                      3 O u1 p2 {1,S}''')
-        
+
         self.mol17 = Molecule().fromAdjacencyList('''1 N u1 p1 {2,D}
                                                      2 O u0 p2 {1,D}''')
-        
+
         self.mol18 = Molecule().fromAdjacencyList('''1  N u0 p0 c+1 {2,B} {6,B} {7,S}
                                                      2  C u0 p0 {1,B} {3,B} {8,S}
                                                      3  C u0 p0 {2,B} {4,B} {9,S}
@@ -488,6 +488,9 @@ class TestGetAtomType(unittest.TestCase):
 
         self.mol75 = Molecule().fromAdjacencyList('''1 H  u0 p0 c0 {2,S}
                                                      2 F  u0 p3 c0 {1,S}''')
+        self.mol76 = Molecule().fromAdjacencyList('''1 H  u0 p0 c0 {2,S}
+                                                     2 Br  u0 p3 c0 {1,S}''')
+
 
     def atomType(self, mol, atomID):
         atom = mol.atoms[atomID]
@@ -502,7 +505,7 @@ class TestGetAtomType(unittest.TestCase):
         Test that getAtomType() returns the hydrogen atom type.
         """
         self.assertEqual(self.atomType(self.mol3, 0), 'H')
-        
+
     def testCarbonTypes(self):
         """
         Test that getAtomType() returns appropriate carbon atom types.
@@ -524,7 +527,7 @@ class TestGetAtomType(unittest.TestCase):
         self.assertEqual(self.atomType(self.mol60, 2), 'C2dc')
         self.assertEqual(self.atomType(self.mol20, 0), 'C2tc')
         self.assertEqual(self.atomType(self.mol29, 0), 'C2tc')  # todo: add in a ciq unit test?
-    
+
     def testNitrogenTypes(self):
         """
         Test that getAtomType() returns appropriate nitrogen atom types.
@@ -547,7 +550,7 @@ class TestGetAtomType(unittest.TestCase):
         self.assertEqual(self.atomType(self.mol39, 2), 'N5tc')
         self.assertEqual(self.atomType(self.mol18, 0), 'N5b')
         # self.assertEqual(self.atomType(self.mol72, 0), 'N5bd')  # aromatic nitrogen currently doesn't work well in RMG. See RMG-Py #982
-        
+
     def testOxygenTypes(self):
         """
         Test that getAtomType() returns appropriate oxygen atom types.
@@ -562,7 +565,7 @@ class TestGetAtomType(unittest.TestCase):
         self.assertEqual(self.atomType(self.mol50, 1), 'O4dc')
         self.assertEqual(self.atomType(self.mol20, 1), 'O4tc')
         # self.assertEqual(self.atomType(self.mol71, 0), 'O4b')  # aromatic oxygen currently doesn't work well in RMG. See RMG-Py #982
-    
+
     def testSiliconTypes(self):
         """
         Test that getAtomType() returns appropriate silicon atom types.
@@ -572,7 +575,7 @@ class TestGetAtomType(unittest.TestCase):
         self.assertEqual(self.atomType(self.mol4, 5), 'Sid')
         self.assertEqual(self.atomType(self.mol4, 4), 'Sidd')
         self.assertEqual(self.atomType(self.mol4, 7), 'Sit')  #todo: add in Siq unit test?
-    
+
     def testSulfurTypes(self):
         """
         Test that getAtomType() returns appropriate sulfur atom types.
@@ -624,6 +627,12 @@ class TestGetAtomType(unittest.TestCase):
         Test that getAtomType() returns appropriate fluorine atom types.
         """
         self.assertEqual(self.atomType(self.mol75, 1), 'F1s')
+
+    def testFluorineTypes(self):
+                """
+        Test that getAtomType() returns appropriate bromine atom types.
+                """
+        self.assertEqual(self.atomType(self.mol76, 1), 'Br1s')
 
     def testOtherTypes(self):
         """
