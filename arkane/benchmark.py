@@ -11,13 +11,15 @@ class BenchmarkEntry:
     """
     A class for storing info related to a molecule for QM benchmarking
     """
-    def __init__(self, name=None, smiles=None, inchi=None, index=None, categories=None, multiplicity=None, charge=None,
+    def __init__(self, name=None, formula=None, adjacency_list=None, smiles=None, inchi=None, index=None, categories=None, multiplicity=None, charge=None,
                  rmg_symmetry=None, expt_sources=None, preferred_expt_source=None, ff_xyz=None, dft_xyzs=None,
-                 dft_freqs=None, yaml_file=None, qm_files=None, dft_thermo=None):
+                 dft_freqs=None, yaml_file=None, qm_files=None, dft_thermo=None, atct_id=None, FOD=None, t1=None):
         """
 
         :param name: Name of the species
+        :param formla: Preferred formula for the species
         :param smiles: SMILES string of the species
+        :param adjacency_list: adjacency_list of species
         :param inchi: InChi string of molecule
         :param index: Species index in the benchmarking set
         :param categories: list of categories (e.g. aromatics) that the species belongs to
@@ -32,9 +34,13 @@ class BenchmarkEntry:
         :param yaml_file: The relative location of the yaml file (used to store the data of this object)
         :param qm_files: A dictionary for the mapping {str(file_description):str(file_path)}
         :param dft_thermo: A dictionary mapping Arkane model chemistry strings to rmgpy thermo objects
+        :param atct_id: An ATcT identification number for the species
+        :param FOD: Fractional Occupation Number Weighted Density number for species
         """
         self.name = name
+        self.formula = formula
         self.smiles = smiles
+        self.adjacency_list = adjacency_list
         self.inchi = inchi
         self.index = index
         self.categories = categories or []
@@ -49,6 +55,9 @@ class BenchmarkEntry:
         self.yaml_file = yaml_file
         self.qm_files = qm_files or {}
         self.dft_thermo = dft_thermo or {}
+        self.atct_id = atct_id
+        self.FOD = FOD
+        self.t1 = t1
 
     def save_to_yaml(self, path=None):
         """
