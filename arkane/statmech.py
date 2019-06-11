@@ -697,7 +697,7 @@ def applyEnergyCorrections(E0, modelChemistry, atoms, bonds,
             if modelChemistry.startswith('cbs-qb3'):  # only check start of string to allow different bond corrections (see below)
                 atomEnergies = {'H':-0.499818 + SOC['H'], 'N':-54.520543 + SOC['N'], 'O':-74.987624+ SOC['O'], 'C':-37.785385+ SOC['C'], 'P':-340.817186+ SOC['P'], 'S': -397.657360+ SOC['S']}
             elif modelChemistry == 'm06-2x/cc-pvtz':
-                atomEnergies = {'H':-0.498135 + SOC['H'], 'N':-54.586780 + SOC['N'], 'O':-75.064242+ SOC['O'], 'C':-37.842468+ SOC['C'], 'P':-341.246985+ SOC['P'], 'S': -398.101240+ SOC['S']}
+                atomEnergies = {'H':-0.498135 + SOC['H'], 'N':-54.586780 + SOC['N'], 'O':-75.064242 + SOC['O'], 'C':-37.842468 + SOC['C'], 'P':-341.246985 + SOC['P'], 'S': -398.101240 + SOC['S'],'F':-99.730200 + SOC['F'],'Cl':-460.140693+ SOC['Cl'],'Br': -2574.198266+SOC['Br']}
             elif modelChemistry == 'g3':
                 atomEnergies = {'H':-0.5010030, 'N':-54.564343, 'O':-75.030991, 'C':-37.827717, 'P':-341.116432, 'S': -397.961110}
             elif modelChemistry == 'm08so/mg3s*': # * indicates that the grid size used in the [QChem] electronic
