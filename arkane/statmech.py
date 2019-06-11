@@ -685,7 +685,9 @@ def applyEnergyCorrections(E0, modelChemistry, atoms, bonds,
         # Values in millihartree are also available (with fewer significant figures) from table VII of http://dx.doi.org/10.1063/1.473182
         # Iodine SOC calculated as a weighted average of the electronic spin splittings of the lowest energy state. The splittings are
         # obtained from Huber, K.P.; Herzberg, G., Molecular Spectra and Molecular Structure. IV. Constants of Diatomic Molecules, Van Nostrand Reinhold Co., 1979
-        SOC = {'H': 0.0, 'N': 0.0, 'O': -0.000355, 'C': -0.000135, 'S': -0.000893, 'P': 0.0, 'I':-0.011547226, 'Cl':-0.001338}
+        # Bromine SOC taken from https://cccbdb.nist.gov/elecspin.asp
+
+        SOC = {'H': 0.0, 'N': 0.0, 'O': -0.000355, 'C': -0.000135, 'F':-0.0006135, 'S': -0.000893, 'P': 0.0, 'I':-0.011547226, 'Cl':-0.001338, 'Br':-0.005597}
 
         # Step 1: Reference all energies to a model chemistry-independent basis
         # by subtracting out that model chemistry's atomic energies
