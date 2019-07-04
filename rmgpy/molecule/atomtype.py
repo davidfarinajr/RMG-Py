@@ -266,7 +266,8 @@ atomTypes['R']    = AtomType(label='R', generic=[], specific=[
     'S','Sa','S0sc','S2s','S2sc','S2d','S2dc','S2tc','S4s','S4sc','S4d','S4dd','S4dc','S4b','S4t','S4tdc','S6s','S6sc','S6d','S6dd','S6ddd','S6dc','S6t','S6td','S6tt','S6tdc',
     'Cl','Cl1s',
     'I','I1s',
-    'F','F1s'])
+    'F','F1s',
+    'Br','Br1s'])
 
 atomTypes['R!H']  = AtomType(label='R!H', generic=['R'], specific=[
     'Val4','Val5','Val6','Val7',
@@ -295,7 +296,8 @@ atomTypes['Val6'] = AtomType(label='Val6', generic=['R','R!H'], specific=[
 atomTypes['Val7'] = AtomType(label='Val7', generic=['R','R!H'], specific=[
     'Cl','Cl1s',
     'I','I1s',
-    'F','F1s'])
+    'F','F1s',
+    'Br','Br1s'])
 
 atomTypes['H'   ] = AtomType('H',    generic=['R'],            specific=[])
 
@@ -552,6 +554,11 @@ atomTypes['F1s'] = AtomType('F1s', generic=['R','R!H','F','Val7'],  specific=[],
                              single=[0,1], allDouble=[0], rDouble=[], oDouble=[], sDouble=[], triple=[0], benzene=[0], lonePairs=[3], charge=[0])
 # examples for F1s: HF, [F], FO, CH3F, F2
 
+atomTypes['Br'  ] = AtomType('Br',   generic=['R','R!H','Val7'],      specific=['Br1s'])
+atomTypes['Br1s'] = AtomType('Br1s', generic=['R','R!H','Br','Val7'],  specific=[],
+                             single=[0,1], allDouble=[0], rDouble=[], oDouble=[], sDouble=[], triple=[0], quadruple=[0], benzene=[0], lonePairs=[3], charge=[0])
+# examples for Br1s: HBr, [Br], BrO, CH3Br, Br2                     
+
 atomTypes['X'   ].setActions(incrementBond=['X'],            decrementBond=['X'],            formBond=['X'],         breakBond=['X'],         incrementRadical=[],       decrementRadical=[],       incrementLonePair=[],      decrementLonePair=[])
 atomTypes['Xv'  ].setActions(incrementBond=[],               decrementBond=[],               formBond=['Xo'],        breakBond=[],            incrementRadical=[],       decrementRadical=[],       incrementLonePair=[],      decrementLonePair=[])
 atomTypes['Xo'  ].setActions(incrementBond=['Xo'],           decrementBond=['Xo'],           formBond=[],            breakBond=['Xv'],  incrementRadical=[],       decrementRadical=[],       incrementLonePair=[],      decrementLonePair=[])
@@ -664,6 +671,9 @@ atomTypes['I1s'].setActions(incrementBond=[],               decrementBond=[],   
 
 atomTypes['F'  ].setActions(incrementBond=[],               decrementBond=[],               formBond=['F'],        breakBond=['F'],        incrementRadical=['F'],   decrementRadical=['F'],   incrementLonePair=[],      decrementLonePair=[])
 atomTypes['F1s'].setActions(incrementBond=[],               decrementBond=[],               formBond=['F1s'],      breakBond=['F1s'],      incrementRadical=['F1s'], decrementRadical=['F1s'], incrementLonePair=[],      decrementLonePair=[])
+
+atomTypes['Br'  ].setActions(incrementBond=[],               decrementBond=[],               formBond=['Br'],        breakBond=['Br'],        incrementRadical=['Br'],   decrementRadical=['Br'],   incrementLonePair=[],      decrementLonePair=[])
+atomTypes['Br1s'].setActions(incrementBond=[],               decrementBond=[],               formBond=['Br1s'],      breakBond=['Br1s'],      incrementRadical=['Br1s'], decrementRadical=['Br1s'], incrementLonePair=[],      decrementLonePair=[])
 
 #these are ordered on priority of picking if we encounter a more general atomType for make
 allElements=['H', 'C', 'O', 'N', 'S', 'Si', 'Cl', 'F', 'Br', 'Ne', 'Ar', 'He',]
