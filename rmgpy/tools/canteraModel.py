@@ -240,7 +240,7 @@ class Cantera:
         'V0List'                A tuple giving the ([list of initial specific volumes], units)
         """
 
-        self.conditions = generateCanteraConditions(reactorTypeList, reactionTimeList, molFracList, Tlist, Plist)
+        self.conditions = generateCanteraConditions(reactorTypeList, reactionTimeList, molFracList, Tlist, Plist, Vlist)
 
     def loadModel(self):
         """
@@ -422,7 +422,7 @@ class Cantera:
             while canteraSimulation.time<condition.reactionTime.value_si:
 
                 # Advance the state of the reactor network in time from the current time to time t [s], taking as many integrator timesteps as necessary.
-                canteraSimulation.step(condition.reactionTime.value_si)
+                canteraSimulation.step()
                 times.append(canteraSimulation.time)
                 temperature.append(canteraReactor.T)
                 pressure.append(canteraReactor.thermo.P)

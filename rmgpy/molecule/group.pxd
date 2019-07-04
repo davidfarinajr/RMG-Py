@@ -43,6 +43,7 @@ cdef class GroupAtom(Vertex):
 
     cdef public list reg_dim_atm
     cdef public list reg_dim_u
+    cdef public list reg_dim_r
 
     cpdef Vertex copy(self)
 
@@ -62,13 +63,19 @@ cdef class GroupAtom(Vertex):
 
     cpdef applyAction(self, list action)
 
-    cpdef bint equivalent(self, Vertex other) except -2
+    cpdef bint equivalent(self, Vertex other, bint strict=?) except -2
 
     cpdef bint isSpecificCaseOf(self, Vertex other) except -2
+
+    cpdef bint isSurfaceSite(self) except -2
 
     cpdef bint isOxygen(self)
 
     cpdef bint isSulfur(self)
+
+    cpdef bint isNitrogen(self)
+
+    cpdef bint isCarbon(self)
 
     cpdef list countBonds(self, wildcards = ?)
 
@@ -165,15 +172,19 @@ cdef class Group(Graph):
 
     cpdef update_charge(self)
 
-    cpdef bint isIsomorphic(self, Graph other, dict initialMap=?, bint saveOrder=?) except -2
+    cpdef bint isIsomorphic(self, Graph other, dict initialMap=?, bint saveOrder=?, bint strict=?) except -2
 
-    cpdef list findIsomorphism(self, Graph other, dict initialMap=?, bint saveOrder=?)
+    cpdef list findIsomorphism(self, Graph other, dict initialMap=?, bint saveOrder=?, bint strict=?)
 
     cpdef bint isSubgraphIsomorphic(self, Graph other, dict initialMap=?, bint generateInitialMap=?, bint saveOrder=?) except -2
 
     cpdef list findSubgraphIsomorphisms(self, Graph other, dict initialMap=?, bint saveOrder=?)
     
     cpdef bint isIdentical(self, Graph other, bint saveOrder=?)
+
+    cpdef bint isSurfaceSite(self) except -2
+    
+    cpdef bint containsSurfaceSite(self) except -2
 
     cpdef bint isAromaticRing(self)
 

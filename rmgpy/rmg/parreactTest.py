@@ -50,7 +50,7 @@ from rmgpy.rmg.react import *
 
 try:
     from scoop import futures, _control, shared
-except ImportError, e:
+except ImportError:
     import logging as logging
     logging.debug("Could not properly import SCOOP.")
 
@@ -91,8 +91,9 @@ def generate():
     spcA = Species().fromSMILES('[OH]')
     spcs = [Species().fromSMILES('CC'), Species().fromSMILES('[CH3]')]
     spcTuples = [(spcA, spc) for spc in spcs]
+    procnum = 2
 
-    reactionList = list(react(*spcTuples))
+    reactionList = list(react(spcTuples, procnum))
 
     if not reactionList: return False
 

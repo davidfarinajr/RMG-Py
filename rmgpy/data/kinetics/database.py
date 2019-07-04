@@ -37,10 +37,11 @@ import numpy
 import rmgpy.constants as constants
 from rmgpy.kinetics import Arrhenius, ArrheniusEP, ThirdBody, Lindemann, Troe, \
                            PDepArrhenius, MultiArrhenius, MultiPDepArrhenius, \
-                           Chebyshev, KineticsData
+                           Chebyshev, KineticsData, StickingCoefficient, \
+                           StickingCoefficientBEP, SurfaceArrhenius, SurfaceArrheniusBEP
 from rmgpy.molecule import Molecule, Group
 from rmgpy.species import Species
-from rmgpy.reaction import Reaction, isomorphic_species_lists
+from rmgpy.reaction import Reaction, same_species_lists
 from rmgpy.data.base import LogicNode
 
 from .family import  KineticsFamily
@@ -73,6 +74,10 @@ class KineticsDatabase(object):
             'ThirdBody': ThirdBody,
             'Lindemann': Lindemann,
             'Troe': Troe,
+            'StickingCoefficient': StickingCoefficient,
+            'StickingCoefficientBEP': StickingCoefficientBEP,
+            'SurfaceArrhenius': SurfaceArrhenius,
+            'SurfaceArrheniusBEP': SurfaceArrheniusBEP,
             'R': constants.R,
         }
         self.global_context = {}
@@ -473,6 +478,8 @@ and immediately used in input files without any additional changes.
         # Check if the reactants are the same
         # If they refer to the same memory address, then make a deep copy so
         # they can be manipulated independently
+        if isinstance(reactants, tuple):
+            reactants = list(reactants)
         same_reactants = 0
         if len(reactants) == 2:
             if reactants[0] is reactants[1]:
@@ -507,8 +514,6 @@ and immediately used in input files without any additional changes.
                     same_reactants = 2
 
         # Label reactant atoms for proper degeneracy calculation (cannot be in tuple)
-        if isinstance(reactants, tuple):
-            reactants = list(reactants)
         ensure_independent_atom_ids(reactants, resonance=resonance)
 
         combos = generate_molecule_combos(reactants)
@@ -615,11 +620,11 @@ and immediately used in input files without any additional changes.
             # Remove from that set any reactions that don't produce the desired reactants and products
             forward = []; reverse = []
             for rxn in generatedReactions:
-                if (isomorphic_species_lists(reaction.reactants, rxn.reactants)
-                        and isomorphic_species_lists(reaction.products, rxn.products)):
+                if (same_species_lists(reaction.reactants, rxn.reactants)
+                        and same_species_lists(reaction.products, rxn.products)):
                     forward.append(rxn)
-                if (isomorphic_species_lists(reaction.reactants, rxn.products)
-                        and isomorphic_species_lists(reaction.products, rxn.reactants)):
+                if (same_species_lists(reaction.reactants, rxn.products)
+                        and same_species_lists(reaction.products, rxn.reactants)):
                     reverse.append(rxn)
 
             # We should now know whether the reaction is given in the forward or

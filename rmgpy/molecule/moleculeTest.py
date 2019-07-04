@@ -98,16 +98,104 @@ class TestAtom(unittest.TestCase):
             else:
                 self.assertFalse(atom.isCarbon())
 
+    def testIsSilicon(self):
+        """
+        Test the Atom.isSilicon() method.
+        """
+        for element in elementList:
+            atom = Atom(element=element, radicalElectrons=1, charge=0, label='*1', lonePairs=0)
+            if element.symbol == 'Si':
+                self.assertTrue(atom.isSilicon())
+            else:
+                self.assertFalse(atom.isSilicon())
+
     def testIsOxygen(self):
         """
         Test the Atom.isOxygen() method.
         """
         for element in elementList:
-            atom = Atom(element=element, radicalElectrons=1, charge=0, label='*1', lonePairs=2)
+            atom = Atom(element=element, radicalElectrons=2, charge=0, label='*1', lonePairs=2)
             if element.symbol == 'O':
                 self.assertTrue(atom.isOxygen())
             else:
                 self.assertFalse(atom.isOxygen())
+
+    def testIsNitrogen(self):
+        """
+        Test the Atom.isNitrogen() method.
+        """
+        for element in elementList:
+            atom = Atom(element=element, radicalElectrons=1, charge=0, label='*1', lonePairs=1)
+            if element.symbol == 'N':
+                self.assertTrue(atom.isNitrogen())
+            else:
+                self.assertFalse(atom.isNitrogen())
+
+    def testIsSulfur(self):
+        """
+        Test the Atom.isSulfur() method.
+        """
+        for element in elementList:
+            atom = Atom(element=element, radicalElectrons=1, charge=0, label='*1', lonePairs=2)
+            if element.symbol == 'S':
+                self.assertTrue(atom.isSulfur())
+            else:
+                self.assertFalse(atom.isSulfur())
+
+    def testIsFluorine(self):
+        """
+        Test the Atom.isFluorine() method.
+        """
+        for element in elementList:
+            atom = Atom(element=element, radicalElectrons=1, charge=0, label='*1', lonePairs=3)
+            if element.symbol == 'F':
+                self.assertTrue(atom.isFluorine())
+            else:
+                self.assertFalse(atom.isFluorine())
+
+    def testIsChlorine(self):
+        """
+        Test the Atom.isChlorine() method.
+        """
+        for element in elementList:
+            atom = Atom(element=element, radicalElectrons=1, charge=0, label='*1', lonePairs=3)
+            if element.symbol == 'Cl':
+                self.assertTrue(atom.isChlorine())
+            else:
+                self.assertFalse(atom.isChlorine())
+
+    def testIsIodine(self):
+        """
+        Test the Atom.isIodine() method.
+        """
+        for element in elementList:
+            atom = Atom(element=element, radicalElectrons=1, charge=0, label='*1', lonePairs=3)
+            if element.symbol == 'I':
+                self.assertTrue(atom.isIodine())
+            else:
+                self.assertFalse(atom.isIodine())
+
+    def testIsNOS(self):
+        """
+        Test the Atom.isNOS() method.
+        """
+        for element in elementList:
+            atom = Atom(element=element, radicalElectrons=1, charge=0, label='*1', lonePairs=2)
+            if element.symbol in ['N', 'O', 'S']:
+                self.assertTrue(atom.isNOS())
+            else:
+                self.assertFalse(atom.isNOS())
+
+    def testIsSurfaceSite(self):
+        """
+        Test the Atom.isSurfaceSite() method.
+        """
+        for element in elementList:
+            atom = Atom(element=element, radicalElectrons=0, charge=0, label='*1', lonePairs=0)
+            if element.symbol == 'X':
+                self.assertTrue(atom.isSurfaceSite())
+            else:
+                self.assertFalse(atom.isSurfaceSite())
 
     def testIncrementRadical(self):
         """
@@ -888,7 +976,46 @@ class TestMolecule(unittest.TestCase):
         molecule2 = Molecule().fromSMILES('C[CH]C=CC=C')
         self.assertTrue(molecule1.isIsomorphic(molecule2))
         self.assertTrue(molecule2.isIsomorphic(molecule1))
-
+        
+        molecule1 = Molecule().fromAdjacencyList("""
+multiplicity 2
+1  *1 C u0 p0 c0 {2,D} {8,S} {9,S}
+2  C u0 p0 c0 {1,D} {3,S} {10,S}
+3  C u0 p0 c0 {2,S} {4,D} {11,S}
+4  C u0 p0 c0 {3,D} {5,S} {12,S}
+5  C u1 p0 c0 {4,S} {6,S} {7,S}
+6  H u0 p0 c0 {5,S}
+7  C u0 p0 c0 {5,S} {13,S} {14,S} {15,S}
+8  *2 H u0 p0 c0 {1,S}
+9  H u0 p0 c0 {1,S}
+10 H u0 p0 c0 {2,S}
+11 H u0 p0 c0 {3,S}
+12 H u0 p0 c0 {4,S}
+13 H u0 p0 c0 {7,S}
+14 H u0 p0 c0 {7,S}
+15 H u0 p0 c0 {7,S}""")
+        molecule2 = Molecule().fromAdjacencyList("""
+multiplicity 2
+1  *1 C u0 p0 c0 {2,D} {13,S} {9,S}
+2  C u0 p0 c0 {1,D} {3,S} {10,S}
+3  C u0 p0 c0 {2,S} {4,D} {11,S}
+4  C u0 p0 c0 {3,D} {5,S} {12,S}
+5  C u1 p0 c0 {4,S} {6,S} {7,S}
+6  H u0 p0 c0 {5,S}
+7  C u0 p0 c0 {5,S} {8,S} {14,S} {15,S}
+8  H u0 p0 c0 {7,S}
+9  H u0 p0 c0 {1,S}
+10 H u0 p0 c0 {2,S}
+11 H u0 p0 c0 {3,S}
+12 H u0 p0 c0 {4,S}
+13 *2 H u0 p0 c0 {1,S}
+14 H u0 p0 c0 {7,S}
+15 H u0 p0 c0 {7,S}""")
+        
+        self.assertTrue(molecule1.isIsomorphic(molecule2,generateInitialMap=True))
+        self.assertTrue(molecule2.isIsomorphic(molecule1,generateInitialMap=True))
+    
+        
     def testSubgraphIsomorphism(self):
         """
         Check the graph isomorphism functions.
@@ -1002,6 +1129,30 @@ class TestMolecule(unittest.TestCase):
         self.assertTrue(molecule.isSubgraphIsomorphic(groupRing))
         mapping = molecule.findSubgraphIsomorphisms(groupRing)
         self.assertEqual(len(mapping), 5)
+
+    def test_lax_isomorphism(self):
+        """Test that we can do isomorphism comparison with strict=False"""
+        mol1 = Molecule().fromAdjacencyList("""
+multiplicity 2
+1 O u0 p2 c0 {3,D}
+2 C u1 p0 c0 {3,S} {4,S} {5,S}
+3 C u0 p0 c0 {1,D} {2,S} {6,S}
+4 H u0 p0 c0 {2,S}
+5 H u0 p0 c0 {2,S}
+6 H u0 p0 c0 {3,S}
+        """)
+
+        mol2 = Molecule().fromAdjacencyList("""
+multiplicity 2
+1 O u1 p2 c0 {3,S}
+2 C u0 p0 c0 {3,D} {4,S} {5,S}
+3 C u0 p0 c0 {1,S} {2,D} {6,S}
+4 H u0 p0 c0 {2,S}
+5 H u0 p0 c0 {2,S}
+6 H u0 p0 c0 {3,S}
+        """)
+
+        self.assertTrue(mol1.isIsomorphic(mol2, strict=False))
 
     def testAdjacencyList(self):
         """
@@ -1200,72 +1351,74 @@ class TestMolecule(unittest.TestCase):
         The first two are different Kekule forms of the same thing.
         """
         test_cases = {
-                    "CC1C=CC=CC=1O":"""
-                        1 C u0 p0 c0 {2,S} {9,S} {10,S} {11,S}
-                        2 C u0 p0 c0 {1,S} {3,D} {4,S}
-                        3 C u0 p0 c0 {2,D} {5,S} {8,S}
-                        4 C u0 p0 c0 {2,S} {7,D} {12,S}
-                        5 C u0 p0 c0 {3,S} {6,D} {13,S}
-                        6 C u0 p0 c0 {5,D} {7,S} {14,S}
-                        7 C u0 p0 c0 {4,D} {6,S} {15,S}
-                        8 O u0 p2 c0 {3,S} {16,S}
-                        9 H u0 p0 c0 {1,S}
-                        10 H u0 p0 c0 {1,S}
-                        11 H u0 p0 c0 {1,S}
-                        12 H u0 p0 c0 {4,S}
-                        13 H u0 p0 c0 {5,S}
-                        14 H u0 p0 c0 {6,S}
-                        15 H u0 p0 c0 {7,S}
-                        16 H u0 p0 c0 {8,S}""",
-                    "CC1=CC=CC=C1O":"""
-                        1 C u0 p0 c0 {2,S} {9,S} {10,S} {11,S}
-                        2 C u0 p0 c0 {1,S} {3,S} {4,D}
-                        3 C u0 p0 c0 {2,S} {5,D} {8,S}
-                        4 C u0 p0 c0 {2,D} {7,S} {15,S}
-                        5 C u0 p0 c0 {3,D} {6,S} {12,S}
-                        6 C u0 p0 c0 {5,S} {7,D} {13,S}
-                        7 C u0 p0 c0 {4,S} {6,D} {14,S}
-                        8 O u0 p2 c0 {3,S} {16,S}
-                        9 H u0 p0 c0 {1,S}
-                        10 H u0 p0 c0 {1,S}
-                        11 H u0 p0 c0 {1,S}
-                        12 H u0 p0 c0 {5,S}
-                        13 H u0 p0 c0 {6,S}
-                        14 H u0 p0 c0 {7,S}
-                        15 H u0 p0 c0 {4,S}
-                        16 H u0 p0 c0 {8,S}""",
-                    "CC1C=CC=CC=1":"""
-                        1  C u0 p0 c0 {2,D} {6,S} {7,S}
-                        2  C u0 p0 c0 {1,D} {3,S} {8,S}
-                        3  C u0 p0 c0 {2,S} {4,D} {9,S}
-                        4  C u0 p0 c0 {3,D} {5,S} {10,S}
-                        5  C u0 p0 c0 {4,S} {6,D} {11,S}
-                        6  C u0 p0 c0 {1,S} {5,D} {12,S}
-                        7  C u0 p0 c0 {1,S} {13,S} {14,S} {15,S}
-                        8  H u0 p0 c0 {2,S}
-                        9  H u0 p0 c0 {3,S}
-                        10 H u0 p0 c0 {4,S}
-                        11 H u0 p0 c0 {5,S}
-                        12 H u0 p0 c0 {6,S}
-                        13 H u0 p0 c0 {7,S}
-                        14 H u0 p0 c0 {7,S}
-                        15 H u0 p0 c0 {7,S}"""
-                    }
+            "CC1=C(O)C=CC=C1": """
+1 C u0 p0 c0 {2,S} {9,S} {10,S} {11,S}
+2 C u0 p0 c0 {1,S} {3,D} {4,S}
+3 C u0 p0 c0 {2,D} {5,S} {8,S}
+4 C u0 p0 c0 {2,S} {7,D} {12,S}
+5 C u0 p0 c0 {3,S} {6,D} {13,S}
+6 C u0 p0 c0 {5,D} {7,S} {14,S}
+7 C u0 p0 c0 {4,D} {6,S} {15,S}
+8 O u0 p2 c0 {3,S} {16,S}
+9 H u0 p0 c0 {1,S}
+10 H u0 p0 c0 {1,S}
+11 H u0 p0 c0 {1,S}
+12 H u0 p0 c0 {4,S}
+13 H u0 p0 c0 {5,S}
+14 H u0 p0 c0 {6,S}
+15 H u0 p0 c0 {7,S}
+16 H u0 p0 c0 {8,S}
+""",
+            "CC1=CC=CC=C1O": """
+1 C u0 p0 c0 {2,S} {9,S} {10,S} {11,S}
+2 C u0 p0 c0 {1,S} {3,S} {4,D}
+3 C u0 p0 c0 {2,S} {5,D} {8,S}
+4 C u0 p0 c0 {2,D} {7,S} {15,S}
+5 C u0 p0 c0 {3,D} {6,S} {12,S}
+6 C u0 p0 c0 {5,S} {7,D} {13,S}
+7 C u0 p0 c0 {4,S} {6,D} {14,S}
+8 O u0 p2 c0 {3,S} {16,S}
+9 H u0 p0 c0 {1,S}
+10 H u0 p0 c0 {1,S}
+11 H u0 p0 c0 {1,S}
+12 H u0 p0 c0 {5,S}
+13 H u0 p0 c0 {6,S}
+14 H u0 p0 c0 {7,S}
+15 H u0 p0 c0 {4,S}
+16 H u0 p0 c0 {8,S}
+""",
+            "CC1=CC=CC=C1": """
+1  C u0 p0 c0 {2,D} {6,S} {7,S}
+2  C u0 p0 c0 {1,D} {3,S} {8,S}
+3  C u0 p0 c0 {2,S} {4,D} {9,S}
+4  C u0 p0 c0 {3,D} {5,S} {10,S}
+5  C u0 p0 c0 {4,S} {6,D} {11,S}
+6  C u0 p0 c0 {1,S} {5,D} {12,S}
+7  C u0 p0 c0 {1,S} {13,S} {14,S} {15,S}
+8  H u0 p0 c0 {2,S}
+9  H u0 p0 c0 {3,S}
+10 H u0 p0 c0 {4,S}
+11 H u0 p0 c0 {5,S}
+12 H u0 p0 c0 {6,S}
+13 H u0 p0 c0 {7,S}
+14 H u0 p0 c0 {7,S}
+15 H u0 p0 c0 {7,S}
+""",
+        }
         for smiles, adjlist in test_cases.iteritems():
             m = Molecule().fromAdjacencyList(adjlist)
             s = m.toSMILES()
             self.assertEqual(s, smiles, "Generated SMILES string {0} instead of {1}".format(s, smiles))
-        
 
     def testKekuleRoundTripSMILES(self):
         """
         Test that we can round-trip SMILES strings of Kekulized aromatics
         """
-        import rmgpy.molecule
         test_strings = [
-                       'CC1=CC=CC=C1O', 'CC1C=CC=CC=1O',
-                       # 'Cc1ccccc1O', # this will fail because it is Kekulized during fromSMILES()
-                       ]
+            'CC1=CC=CC=C1O',
+            'CC1=C(O)C=CC=C1',
+            # 'Cc1ccccc1O',  # this will fail because it is Kekulized during fromSMILES()
+        ]
         for s in test_strings:
             molecule = Molecule(SMILES=s)
             self.assertEqual(s, molecule.toSMILES(), "Started with {0} but ended with {1}".format(s, molecule.toSMILES()))
@@ -1536,7 +1689,29 @@ multiplicity 2
         saturated_molecule = indenyl.copy(deep=True)
         saturated_molecule.saturate_radicals()
         self.assertTrue(saturated_molecule.isIsomorphic(indene))
-        
+
+    def testSurfaceMolecules(self):
+        """
+        Test that we can identify surface molecules.
+        """
+        adsorbed = Molecule().fromAdjacencyList("""
+                                                1 H u0 p0 c0 {2,S}
+                                                2 X u0 p0 c0 {1,S}
+                                                """)
+        self.assertTrue(adsorbed.containsSurfaceSite())
+        gas = Molecule().fromAdjacencyList("""
+                                        1 H u0 p0 c0 {2,S}
+                                        2 H u0 p0 c0 {1,S}
+                                        """)
+        self.assertFalse(gas.containsSurfaceSite())
+
+        surface_site = Molecule().fromAdjacencyList("""
+                                                1 X u0 p0 c0
+                                                """)
+        self.assertTrue((surface_site.isSurfaceSite()))
+        self.assertFalse((adsorbed.isSurfaceSite()))
+        self.assertFalse((gas.isSurfaceSite()))
+
     def testMalformedAugmentedInChI(self):
         """Test that augmented inchi without InChI layer raises Exception."""
         from .inchi import InchiException
@@ -2117,6 +2292,18 @@ multiplicity 2
         molCopy = mol.copy(deep=True)
         self.assertTrue(mol.isIsomorphic(molCopy))
         self.assertTrue(mol.isIdentical(molCopy))
+
+    def testIdenticalTrue2(self):
+        """Test that isIdentical with strict=False returns True with allyl"""
+        mol = Molecule(SMILES='C=C[CH2]')
+        mol.assignAtomIDs()
+        res = mol.generate_resonance_structures(keep_isomorphic=True)
+        self.assertEqual(len(res), 2)
+
+        mol2 = res[1]
+        self.assertTrue(mol.isIsomorphic(mol2))
+        self.assertFalse(mol.isIdentical(mol2))
+        self.assertTrue(mol.isIdentical(mol2, strict=False))
 
     def testIdenticalFalse(self):
         """Test that the isIdentical returns False with butane"""

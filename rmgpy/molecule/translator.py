@@ -84,6 +84,11 @@ SMILES_LOOKUPS = {
         1 C u1 p1 c0 {2,S}
         2 H u0 p0 c0 {1,S}
         """,
+    '[X]':  # Surface site
+        """
+        multiplicity 1
+        1 X u0
+        """
 }
 
 #: This dictionary is used to shortcut lookups of a molecule's SMILES string from its chemical formula.
@@ -255,8 +260,6 @@ def fromInChI(mol, inchistr, backend='try-all'):
     a user-specified backend for conversion, currently supporting
     rdkit (default) and openbabel.
     """
-    mol.InChI = inchistr
-
     if inchiutil.INCHI_PREFIX in inchistr:
         return _read(mol, inchistr, 'inchi', backend)
     else:
