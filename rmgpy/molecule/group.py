@@ -2393,6 +2393,7 @@ class Group(Graph):
             molAtom = atom.makeSampleAtom()
             groupToMol[atom] = molAtom
             molToGroup[molAtom] = atom
+            molAtom.label = atom.label
 
         #create the molecule
         newMolecule = mol.Molecule(atoms = groupToMol.values())
