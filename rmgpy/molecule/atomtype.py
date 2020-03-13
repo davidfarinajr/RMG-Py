@@ -269,17 +269,14 @@ ATOMTYPES['R']    = AtomType(label='R', generic=[], specific=[
     'F','F1s'])
 
 ATOMTYPES['R!H']  = AtomType(label='R!H', generic=['R'], specific=[
-    'Val4','Val5','Val6','Val7',
+    'Val4','Val5','Val6',
     'He','Ne','Ar',
     'C','Ca','Cs','Csc','Cd','CO','CS','Cdd','Cdc','Ct','Cb','Cbf','Cq','C2s','C2sc','C2d','C2dc','C2tc',
     'N','N0sc','N1s','N1sc','N1dc','N3s','N3sc','N3d','N3t','N3b','N5sc','N5dc','N5ddc','N5dddc','N5tc','N5b','N5bd',
     'O','Oa','O0sc','O2s','O2sc','O2d','O4sc','O4dc','O4tc','O4b',
     'Si','Sis','Sid','Sidd','Sit','SiO','Sib','Sibf','Siq',
     'S','Sa','S0sc','S2s','S2sc','S2d','S2dc','S2tc','S4s','S4sc','S4d','S4dd','S4dc','S4b','S4t','S4tdc','S6s','S6sc','S6d','S6dd','S6ddd','S6dc','S6t','S6td','S6tt','S6tdc',
-    'Cl','Cl1s',
-    'Br','Br1s',
-    'I','I1s',
-    'F','F1s'])
+    'I','I1s'])
 
 ATOMTYPES['Val4'] = AtomType(label='Val4', generic=['R', 'R!H'], specific=[
     'C','Ca','Cs','Csc','Cd','CO','CS','Cq','Cdd','Cdc','Ct','Cb','Cbf','C2s','C2sc','C2d','C2dc','C2tc',
@@ -537,12 +534,12 @@ ATOMTYPES['S6tdc'] = AtomType('S6tdc', generic=['R', 'R!H', 'S', 'Val6'], specif
                               single=[0,1,2,3,4], all_double=[0, 1, 2], r_double=[], o_double=[], s_double=[], triple=[1, 2], quadruple=[], benzene=[0], lone_pairs=[0], charge=[-1, +1])
 # *Composite atomtype; examples for S6tdc: [SH2+]#[C-], [N-]=[S+]#N
 
-ATOMTYPES['Cl'] = AtomType('Cl', generic=['R', 'R!H', 'Val7'], specific=['Cl1s'])
-ATOMTYPES['Cl1s'] = AtomType('Cl1s', generic=['R', 'R!H', 'Cl', 'Val7'], specific=[],
+ATOMTYPES['Cl'] = AtomType('Cl', generic=['R', 'Val7'], specific=['Cl1s'])
+ATOMTYPES['Cl1s'] = AtomType('Cl1s', generic=['R', 'Cl', 'Val7'], specific=[],
                              single=[0,1], all_double=[0], r_double=[], o_double=[], s_double=[], triple=[0], quadruple=[0], benzene=[0], lone_pairs=[3], charge=[0])
 # examples for Cl1s: HCl, [Cl]
-ATOMTYPES['Br'] = AtomType('Br', generic=['R', 'R!H', 'Val7'], specific=['Br1s'])
-ATOMTYPES['Br1s'] = AtomType('Br1s', generic=['R', 'R!H', 'Br', 'Val7'], specific=[],
+ATOMTYPES['Br'] = AtomType('Br', generic=['R', 'Val7'], specific=['Br1s'])
+ATOMTYPES['Br1s'] = AtomType('Br1s', generic=['R', 'Br', 'Val7'], specific=[],
                              single=[0,1], all_double=[0], r_double=[], o_double=[], s_double=[], triple=[0], quadruple=[0], benzene=[0], lone_pairs=[3], charge=[0])
 # examples for Br1s: HBr, [Br]
 
@@ -551,8 +548,8 @@ ATOMTYPES['I1s'] = AtomType('I1s', generic=['R', 'R!H', 'I', 'Val7'], specific=[
                             single=[0,1], all_double=[0], r_double=[], o_double=[], s_double=[], triple=[0], quadruple=[0], benzene=[0], lone_pairs=[3], charge=[0])
 # examples for I1s: HI, [I], IO, CH3I, I2
 
-ATOMTYPES['F'] = AtomType('F', generic=['R', 'R!H', 'Val7'], specific=['F1s'])
-ATOMTYPES['F1s'] = AtomType('F1s', generic=['R', 'R!H', 'F', 'Val7'], specific=[],
+ATOMTYPES['F'] = AtomType('F', generic=['R', 'Val7'], specific=['F1s'])
+ATOMTYPES['F1s'] = AtomType('F1s', generic=['R', 'F', 'Val7'], specific=[],
                             single=[0,1], all_double=[0], r_double=[], o_double=[], s_double=[], triple=[0], quadruple=[0], benzene=[0], lone_pairs=[3], charge=[0])
 # examples for F1s: HF, [F], FO, CH3F, F2
 
