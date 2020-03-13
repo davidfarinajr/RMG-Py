@@ -587,6 +587,7 @@ class GroupAtom(Vertex):
                               'S': 2,
                               'Ne': 4,
                               'Cl': 3,
+                              'Br': 3,
                               'F': 3,
                               'I': 3,
                               'Ar': 4,
