@@ -588,11 +588,11 @@ class ThermoDepository(Database):
     A class for working with the RMG thermodynamics depository.
     """
 
-    def __init__(self, label='', name='', short_desc='', long_desc=''):
-        Database.__init__(self, label=label, name=name, short_desc=short_desc, long_desc=long_desc)
+    def __init__(self, label='', name='', short_desc='', long_desc='', metal=None, site=None, facet=None):
+        Database.__init__(self, label=label, name=name, short_desc=short_desc, long_desc=long_desc, metal=metal, site=site, facet=facet)
 
     def load_entry(self, index, label, molecule, thermo, reference=None, referenceType='', shortDesc='', longDesc='',
-                   rank=None):
+                   rank=None, metal=None, site=None, facet=None):
         """
         Method for parsing entries in database files.
         Note that these argument names are retained for backward compatibility.
@@ -607,6 +607,9 @@ class ThermoDepository(Database):
             short_desc=shortDesc,
             long_desc=longDesc.strip(),
             rank=rank,
+            metal=metal,
+            site=site,
+            facet=facet,
         )
         self.entries[label] = entry
         return entry
@@ -625,8 +628,9 @@ class ThermoLibrary(Database):
     A class for working with a RMG thermodynamics library.
     """
 
-    def __init__(self, label='', name='', solvent=None, short_desc='', long_desc=''):
-        Database.__init__(self, label=label, name=name, short_desc=short_desc, long_desc=long_desc)
+    def __init__(self, label='', name='', solvent=None, short_desc='', long_desc='', metal=None, site=None, facet=None):
+        Database.__init__(self, label=label, name=name, short_desc=short_desc, long_desc=long_desc,
+                          metal=metal, site=site, facet=facet)
 
     def load_entry(self,
                    index,
@@ -638,6 +642,9 @@ class ThermoLibrary(Database):
                    shortDesc='',
                    longDesc='',
                    rank=None,
+                   metal=None,
+                   facet=None,
+                   site=None,
                    ):
         """
         Method for parsing entries in database files.
@@ -668,6 +675,9 @@ class ThermoLibrary(Database):
             short_desc=shortDesc,
             long_desc=longDesc.strip(),
             rank=rank,
+            metal=metal,
+            facet=facet,
+            site=site,
         )
 
     def save_entry(self, f, entry):
@@ -698,8 +708,9 @@ class ThermoGroups(Database):
     A class for working with an RMG thermodynamics group additivity database.
     """
 
-    def __init__(self, label='', name='', short_desc='', long_desc=''):
-        Database.__init__(self, label=label, name=name, short_desc=short_desc, long_desc=long_desc)
+    def __init__(self, label='', name='', short_desc='', long_desc='', metal=None, site=None, facet=None):
+        Database.__init__(self, label=label, name=name, short_desc=short_desc, long_desc=long_desc,
+                          metal=metal, site=site, facet=facet)
 
     def load_entry(self,
                    index,
@@ -711,6 +722,9 @@ class ThermoGroups(Database):
                    shortDesc='',
                    longDesc='',
                    rank=None,
+                   metal=None,
+                   facet=None,
+                   site=None,
                    ):
         """
         Method for parsing entries in database files.
@@ -734,6 +748,9 @@ class ThermoGroups(Database):
             short_desc=shortDesc,
             long_desc=longDesc.strip(),
             rank=rank,
+            metal=metal,
+            facet=facet,
+            site=site,
         )
 
     def save_entry(self, f, entry):
@@ -772,6 +789,9 @@ class ThermoGroups(Database):
         destination.long_desc = source.long_desc
         destination.rank = source.rank
         destination.reference_type = source.reference_type
+        destination.metal = source.metal
+        destination.facet = source.facet
+        destination.site = source.site
 
     def remove_group(self, group_to_remove):
         """
@@ -926,7 +946,7 @@ class ThermoDatabase(object):
             'other',
             'longDistanceInteraction_cyclic',
             'longDistanceInteraction_noncyclic',
-            'adsorptionPt',
+            'adsorptionPt111',
         ]
         self.groups = {
             category: ThermoGroups(label=category).load(os.path.join(path, category + '.py'),
