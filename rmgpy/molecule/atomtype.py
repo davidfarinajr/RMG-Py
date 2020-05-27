@@ -640,7 +640,7 @@ ATOMTYPES['Rh'].set_actions(increment_bond=['Rh'], decrement_bond=['Rh'], form_b
 ATOMTYPES['Ir'].set_actions(increment_bond=['Ir'], decrement_bond=['Ir'], form_bond=['Ir'], break_bond=['Ir'], increment_radical=[], decrement_radical=[], increment_lone_pair=[], decrement_lone_pair=[])
 ATOMTYPES['Ru'].set_actions(increment_bond=['Ru'], decrement_bond=['Ru'], form_bond=['Ru'], break_bond=['Ru'], increment_radical=[], decrement_radical=[], increment_lone_pair=[], decrement_lone_pair=[])
 
-ATOMTYPES['Xv'].set_actions(increment_bond=[], decrement_bond=[], form_bond=['Xo'], break_bond=[], increment_radical=[], decrement_radical=[], increment_lone_pair=[], decrement_lone_pair=[])
+ATOMTYPES['Xv'].set_actions(increment_bond=['Xo'], decrement_bond=[], form_bond=['Xo'], break_bond=[], increment_radical=[], decrement_radical=[], increment_lone_pair=[], decrement_lone_pair=[])
 ATOMTYPES['Ptv'].set_actions(increment_bond=[], decrement_bond=[], form_bond=['Pto'], break_bond=[], increment_radical=[], decrement_radical=[], increment_lone_pair=[], decrement_lone_pair=[])
 ATOMTYPES['Cuv'].set_actions(increment_bond=[], decrement_bond=[], form_bond=['Cuo'], break_bond=[], increment_radical=[], decrement_radical=[], increment_lone_pair=[], decrement_lone_pair=[])
 ATOMTYPES['Niv'].set_actions(increment_bond=[], decrement_bond=[], form_bond=['Nio'], break_bond=[], increment_radical=[], decrement_radical=[], increment_lone_pair=[], decrement_lone_pair=[])
