@@ -1536,9 +1536,9 @@ class ThermoDatabase(object):
         if not molecule.contains_surface_site():
             raise DatabaseError("Can't get binding energy if the species does not contain a surface site.")
         
-        metal = molecule.props.get('metal', None)
-        facet = molecule.props.get('facet', None)
-        site = molecule.props.get('site', None)
+        metal = molecule.props.get('metal')
+        facet = molecule.props.get('facet')
+        site = molecule.props.get('site')
 
         if metal is None:
             for atom in molecule.atoms:
@@ -1550,13 +1550,20 @@ class ThermoDatabase(object):
         if facet: label += facet
         if site: label += "_{}".format(site)
    
-        binding_energies = self.surface['binding_energies'].entries.get(label, None)
+        binding_energies = self.surface['binding_energies'].entries.get(label)
         if binding_energies is None and facet is not None:
-            binding_energies = self.surface['binding_energies'].entries.get(metal, None)
+            binding_energies = self.surface['binding_energies'].entries.get(metal)
 
         if binding_energies is None:
-            binding_energies = self.surface['binding_energies'].entries['Pt111'] # Pt by default
+            binding_energies = self.surface['binding_energies'].entries['Pt111'] # Pt111 by default
 
+        # Need H2O and NH3 for vander waals bonds
+        # If not provided, give a default
+        if 'H2O' not in binding_energies.data.binding_energies:
+            binding_energies.data.binding_energies['H2O'] = rmgpy.quantity.Energy(-0.25, 'eV/molecule')
+        if 'NH3' not in binding_energies.data.binding_energies:
+            binding_energies.data.binding_energies['NH3'] = rmgpy.quantity.Energy(-0.50, 'eV/molecule')
+        
         return binding_energies.data
 
     def get_delta_atomic_adsorption_energies(self, species, reference_binding_energies):
@@ -1585,6 +1592,8 @@ class ThermoDatabase(object):
             'H': rmgpy.quantity.Energy(0.0, 'eV/molecule'),
             'O': rmgpy.quantity.Energy(0.0, 'eV/molecule'),
             'N': rmgpy.quantity.Energy(0.0, 'eV/molecule'),
+            'H2O' : rmgpy.quantity.Energy(0.0, 'eV/molecule'),
+            'NH3' : rmgpy.quantity.Energy(0.0, 'eV/molecule'),
         }
 
         for element, deltaEnergy in delta_atomic_adsorption_energy.items():
@@ -1665,8 +1674,8 @@ class ThermoDatabase(object):
         for atom in molecule.atoms:
             if atom.is_surface_site():
                 surface_sites.append(atom)
-        normalized_bonds = {'C': 0., 'O': 0., 'N': 0., 'H': 0.}
-        max_bond_order = {'C': 4., 'O': 2., 'N': 3., 'H': 1.}
+        normalized_bonds = {'C': 0., 'O': 0., 'N': 0., 'H': 0., 'H2O': 0., 'NH3': 0.}
+        max_bond_order = {'C': 4., 'O': 2., 'N': 3., 'H': 1., 'H2O': 1., 'NH3': 1.}
         for site in surface_sites:
             numbonds = len(site.bonds)
             if numbonds == 0:
@@ -1676,7 +1685,13 @@ class ThermoDatabase(object):
                 assert len(site.bonds) == 1, "Each surface site can only be bonded to 1 atom"
                 bonded_atom = list(site.bonds.keys())[0]
                 bond = site.bonds[bonded_atom]
-                if bond.is_single():
+                if bond.is_van_der_waals():
+                    if bonded_atom.is_oxygen():
+                        normalized_bonds['H2O'] += 1.0
+                    elif bonded_atom.is_nitrogen():
+                        normalized_bonds['NH3'] += 1.0
+                    continue
+                elif bond.is_single():
                     bond_order = 1.
                 elif bond.is_double():
                     bond_order = 2.
@@ -1696,10 +1711,12 @@ class ThermoDatabase(object):
         
   
         # now edit the adsorptionThermo using LSR
-        for element in 'CHON':
+        thermo.comment += " Binding energy corrected by LSR: "
+        for element in ('C', 'H', 'O', 'N', 'H2O', 'NH3'):
             change_in_binding_energy = delta[element].value_si * normalized_bonds[element]
             thermo.H298.value_si += change_in_binding_energy
-        thermo.comment += " Binding energy corrected by LSR."
+            if change_in_binding_energy != 0.0:
+                thermo.comment += " {}: {} eV".format(element, change_in_binding_energy/96485.34236)
         return thermo
 
     def get_thermo_data_for_surface_species(self, species):
@@ -1736,7 +1753,9 @@ class ThermoDatabase(object):
                 bonded_atom = list(site.bonds.keys())[0]
                 bond = site.bonds[bonded_atom]
                 dummy_molecule.remove_bond(bond)
-                if bond.is_single():
+                if bond.is_van_der_waals():
+                    pass
+                elif bond.is_single():
                     bonded_atom.increment_radical()
                 elif bond.is_double():
                     bonded_atom.increment_radical()
