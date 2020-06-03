@@ -1457,7 +1457,7 @@ class CoreEdgeReactionModel:
                     for metal_info in metals:
                         logging.info(metal_info)
                         metal, facet, site = metal_info
-                        new_reaction = rxn.change_metal(metal, facet, site, change_barrier=True, thermo_database=thermo_database, alpha=0.5)
+                        new_reaction = rxn.change_metal(metal, facet, site, change_barrier=False, thermo_database=thermo_database, alpha=0.5)
                         new_reactions.append(new_reaction)
             rxns = new_reactions
 
@@ -1569,7 +1569,7 @@ class CoreEdgeReactionModel:
                     for metal_info in metals:
                         logging.info(metal_info)
                         metal, facet, site = metal_info
-                        new_reaction = rxn.change_metal(metal, facet, site, change_barrier=True, thermo_database=thermo_database, alpha=0.5)
+                        new_reaction = rxn.change_metal(metal, facet, site, change_barrier=False, thermo_database=thermo_database, alpha=0.5)
                         new_reactions.append(new_reaction)
             rxns = new_reactions
 
