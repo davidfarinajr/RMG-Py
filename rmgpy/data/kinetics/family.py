@@ -1176,14 +1176,14 @@ class KineticsFamily(Database):
                             for m in entry.item.reactants],
                              products=[Species(molecule=[m.molecule[0].copy(deep=True)], label=m.label)
                             for m in entry.item.products])
-            dHrxn, alpha = self._get_dHrxn_alpha(item,thermo_database)
+            #dHrxn, alpha = self._get_dHrxn_alpha(item,thermo_database)
   
             if type(data) is Arrhenius:
                 # more specific than isinstance(data,Arrhenius) because we want to exclude inherited subclasses!
-                try:
-                    data = data.to_arrhenius_ep(alpha=alpha, dHrxn=dHrxn)
-                except:
-                    data = data.to_arrhenius_ep()
+                # try:
+                #     data = data.to_arrhenius_ep(alpha=alpha, dHrxn=dHrxn)
+                # except:
+                data = data.to_arrhenius_ep()
             elif isinstance(data, StickingCoefficient):
                 data = StickingCoefficientBEP(
                     # todo: perhaps make a method StickingCoefficient.StickingCoefficientBEP
@@ -1196,10 +1196,10 @@ class KineticsFamily(Database):
                     Tmax=deepcopy(data.Tmax)
                 )
             elif isinstance(data, SurfaceArrhenius):
-                try:
-                    data = data.to_surface_arrhenius_bep(alpha=alpha, dHrxn=dHrxn)
-                except:
-                    data = data.to_surface_arrhenius_bep()
+                # try:
+                #     data = data.to_surface_arrhenius_bep(alpha=alpha, dHrxn=dHrxn)
+                # except:
+                data = data.to_surface_arrhenius_bep()
                 # data = SurfaceArrheniusBEP(
                 #     # todo: perhaps make a method SurfaceArrhenius.toSurfaceArrheniusBEP
                 #     #  analogous to Arrhenius.to_arrhenius_ep
@@ -1257,27 +1257,27 @@ class KineticsFamily(Database):
                 if quantum_mechanics:
                     quantum_mechanics.run_jobs(item.reactants + item.products, procnum=procnum)
             
-            dHrxn = 0.0
+            #dHrxn = 0.0
             for reactant in item.reactants:
                 # Clear atom labels to avoid effects on thermo generation, ok because this is a deepcopy
                 reactant.molecule[0].clear_labeled_atoms()
                 reactant.generate_resonance_structures()
                 reactant.thermo = thermo_database.get_thermo_data(reactant, training_set=True)
-                dHrxn += reactant.thermo.get_enthalpy(298) # thermo in reverse
+                #dHrxn += reactant.thermo.get_enthalpy(298) # thermo in reverse
             for product in item.products:
                 product.molecule[0].clear_labeled_atoms()
                 product.generate_resonance_structures()
                 product.thermo = thermo_database.get_thermo_data(product, training_set=True)
-                dHrxn -= product.thermo.get_enthalpy(298)  # thermo in reverse
+                #dHrxn -= product.thermo.get_enthalpy(298)  # thermo in reverse
              
-            if dHrxn < -1e6: # -1000 kJ/mol 
-                alpha = 0.0
-            elif dHrxn < -1e5: # -100 kJ/mol 
-                alpha = 0.1
-            elif dHrxn < -1e4: # -10 kJ/mol 
-                alpha = 0.25
-            else:
-                alpha = 0.5
+            # if dHrxn < -1e6: # -1000 kJ/mol 
+            #     alpha = 0.0
+            # elif dHrxn < -1e5: # -100 kJ/mol 
+            #     alpha = 0.1
+            # elif dHrxn < -1e4: # -10 kJ/mol 
+            #     alpha = 0.25
+            # else:
+            #     alpha = 0.5
             
             # Now that we have the thermo, we can get the reverse k(T)
             item.kinetics = data
@@ -1291,10 +1291,10 @@ class KineticsFamily(Database):
             new_degeneracy = self.calculate_degeneracy(item)
 
             if isinstance(entry.data, SurfaceArrhenius):
-                try:
-                    data = data.to_surface_arrhenius_bep(alpha=alpha, dHrxn=dHrxn)
-                except:
-                    data = data.to_surface_arrhenius_bep()
+                #try:
+                #    data = data.to_surface_arrhenius_bep(alpha=alpha, dHrxn=dHrxn)
+                #except:
+                data = data.to_surface_arrhenius_bep()
                 # data = SurfaceArrheniusBEP(
                 #     #  analogous to Arrhenius.to_arrhenius_ep
                 #     A=deepcopy(data.A),
@@ -1305,10 +1305,10 @@ class KineticsFamily(Database):
                 #     Tmax=deepcopy(data.Tmax)
                 # )
             else:
-                try:
-                    data = data.to_arrhenius_ep(alpha=alpha, dHrxn=dHrxn)
-                except:
-                    data = data.to_arrhenius_ep()
+                # try:
+                #     data = data.to_arrhenius_ep(alpha=alpha, dHrxn=dHrxn)
+                # except:
+                data = data.to_arrhenius_ep()
 
             new_entry = Entry(
                 index=index,
