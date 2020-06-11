@@ -526,7 +526,7 @@ class GroupAtom(Vertex):
         Return ``True`` if the atom represents an sulfur atom or ``False`` if not.
         """
         all_chlorine = [ATOMTYPES['Cl']] + ATOMTYPES['Cl'].specific
-        check_list = [x in chlorine for x in self.atomtype]
+        check_list = [x in all_chlorine for x in self.atomtype]
         return all(check_list)
 
     def is_bromine(self):
