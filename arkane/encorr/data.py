@@ -41,8 +41,8 @@ chemistries.
 # He, Ne, K, Ca, Ti, Cu, Zn, Ge, Br, Kr, Rb, Ag, Cd, Sn, I, Xe, Cs, Hg, and Pb are taken from CODATA
 # Codata: Cox, J. D., Wagman, D. D., and Medvedev, V. A., CODATA Key Values for Thermodynamics, Hemisphere
 # Publishing Corp., New York, 1989. (http://www.science.uwaterloo.ca/~cchieh/cact/tools/thermodata.html)
-atom_hf = {'H': 51.633, 'He': -1.481,
-           'Li': 37.69, 'Be': 76.48, 'B': 136.2, 'C': 170.0284, 'N': 112.471, 'O': 58.997, 'F': 18.464, 'Ne': -1.481,
+atom_hf = {'H': 51.63, 'He': -1.481,
+           'Li': 37.69, 'Be': 76.48, 'B': 136.2, 'C': 169.98, 'N': 112.53, 'O': 58.99, 'F': 18.47, 'Ne': -1.481,
            'Na': 25.69, 'Mg': 34.87, 'Al': 78.23, 'Si': 106.6, 'P': 75.42, 'S': 65.66, 'Cl': 28.59,
            'K': 36.841, 'Ca': 41.014, 'Ti': 111.2, 'Cu': 79.16, 'Zn': 29.685, 'Ge': 87.1, 'Br': 28.182,
            'Kr': -1.481,
@@ -52,7 +52,7 @@ atom_hf = {'H': 51.633, 'He': -1.481,
 # hf0K from ATcT version 1.122g (in kcal/mol)
 spcs_hf = {'CH4': -15.908, 'H2O': -57.106, 'HF': -65.171, 'HCl': -21.986, 'CH3': 35.82,
            'OH': 8.902, 'NH3': -9.217, 'CH2': 93.467, 'NH2': 45.153,
-           'H2': 0.0}
+           'H2': 0.0, 'HBr': -6.685}
 
 # Thermal contribution to enthalpy for the atoms reported by Gaussian thermo whitepaper
 # This will be subtracted from the corresponding value in atom_hf to produce an enthalpy used in calculating
@@ -60,7 +60,7 @@ spcs_hf = {'CH4': -15.908, 'H2O': -57.106, 'HF': -65.171, 'HCl': -21.986, 'CH3':
 atom_thermal = {'H': 1.01, 'He': 1.481,
                 'Li': 1.1, 'Be': 0.46, 'B': 0.29, 'C': 0.25, 'N': 1.04, 'O': 1.04, 'F': 1.05, 'Ne': 1.481,
                 'Na': 1.54, 'Mg': 1.19, 'Al': 1.08, 'Si': 0.76, 'P': 1.28, 'S': 1.05, 'Cl': 1.1,
-                'K': 1.481, 'Ca': 1.481, 'Ti': 1.802, 'Cu': 1.481, 'Zn': 1.481, 'Ge': 1.768, 'Br': 1.481,
+                'K': 1.481, 'Ca': 1.481, 'Ti': 1.802, 'Cu': 1.481, 'Zn': 1.481, 'Ge': 1.768, 'Br': 2.930,
                 'Kr': 1.481,
                 'Rb': 1.481, 'Ag': 1.481, 'Cd': 1.481, 'Sn': 1.485, 'I': 1.481, 'Xe': 1.481,
                 'Cs': 1.481, 'Hg': 1.481, 'Pb': 1.481}
@@ -325,17 +325,58 @@ atom_energies = {
     # E_HF = RHF/UHF cc-pvtz-f12 cc-pvtz-CABS
     # E_correlation = CCSD(T)-F12/RI cc-pvdz-f12 cc-pvdz-CABS cc-pvtz/C
     # E_total = ZPE + E_HF + E_correlation
-    'orca_ccsd(t)-f12/cc-pvdz-f12': {
-        'CH4': -40.405106640788, 'CH3': -39.746483767017, 'CH2': -39.075046821134,
-        'H2O': -76.33800827684802, 'OH': -75.657621974907,
-        'HCl': -460.346899347469,'HF': -100.363596351296,
-        'NH3': -56.458318965949005,'NH2': -55.796511673688,
-        'H2': -1.1635916003470002
+    # 'orca_ccsd(t)-f12/cc-pvdz-f12': {
+    #     'CH4': -40.405106640788, 'CH3': -39.746483767017, 'CH2': -39.075046821134,
+    #     'H2O': -76.33800827684802, 'OH': -75.657621974907,
+    #     'HCl': -460.346899347469,'HF': -100.363596351296,
+    #     'NH3': -56.458318965949005,'NH2': -55.796511673688,
+    #     'H2': -1.1635916003470002
+    # },
+
+    # geometry : B3LYP/6-31G(2df,p) in Gaussian 16
+    # ZPE scale factor = 0.9854 
+    # Single Point calcs in ORCA 4.0.1:
+    # E_HF for G4 method
+    # E_correlation = CCSD(T)-F12/RI cc-pvtz-f12 cc-pvtz-CABS cc-pvtz/C
+    # E_total = ZPE + E_HF + E_correlation
+    'g4hf/orca_ccsd(t)-f12/cc-pvtz-f12': {
+    'CH4': -40.41056462108327, 'H2O': -76.3493681045279, 'HF': -100.37875029234523, 
+    'HCl': -460.36254253627806, 'CH3': -39.75150454303392, 'OH': -75.66818268609747, 
+    'NH3': -56.46627437385021, 'CH2': -39.079028564484695, 'NH2': -55.803700908013724, 
+    'H2': -1.1641371830442517,'C': -37.79343818444951 + SOC['C'], 'H': -0.5000064669501384 + SOC['H'], 
+    'Cl': -459.70577597171825 + SOC['Cl'], 'O': -75.00834594929718 + SOC['O'], 'F': -99.6688789400788 + SOC['F'], 
+    'N': -54.53220093051905 + SOC['N'],
+    },
+
+    # geometry : B3LYP/6-31G(2df,p) in Gaussian 16
+    # ZPE scale factor = 0.9854 
+    # Single Point calcs in ORCA 4.0.1:
+    # E_HF for G4 method
+    # E_correlation = CCSD(T)-F12/RI cc-pvdz-f12 cc-pvdz-CABS cc-pvtz/C
+    # E_total = ZPE + E_HF + E_correlation
+    'g4hf/orca_ccsd(t)-f12/cc-pvdz-f12': {
+    'CH4': -40.40574611200652, 'H2O': -76.3392333633533, 'HF': -100.3654850866514, 
+    'HCl': -460.34733672076624, 'CH3': -39.74705523704291, 'OH': -75.65877539189316, 
+    'NH3': -56.45914814039859, 'CH2': -39.075541789242386, 'NH2': -55.7972179436255, 
+    'H2': -1.1637378585155758,'C': -37.791524059750614 + SOC['C'], 'H': -0.5000064669501384 + SOC['H'], 
+    'Cl': -459.69024170234155 + SOC['Cl'], 'O': -75.0007106548617 + SOC['O'], 'F': -99.65649992292917 + + SOC['F'], 
+    'N': -54.52927592318941 + + SOC['N'],
     },
 
     'ccsd(t)-f12/cc-pvdz-f12_noscale': {
         'H': -0.499811124128 + SOC['H'], 'N': -54.526026290887 + SOC['N'],
         'O': -74.994751897699 + SOC['O'], 'C': -37.787881871511 + SOC['C']
+    },
+
+    'orca_ccsd(t)-f12/cc-pvdz-f12':  {
+        'C': -37.784865223647095, 'H': -0.4998098113006724, 'Cl': -459.68178168949163, 
+        'O': -74.98942753452621, 'F': -99.64460863576855, 'N': -54.52275613103514
+    },
+
+
+    'orca_ccsd(t)-f12/cc-pvtz-f12':  {
+        'C': -37.78796635056457, 'H': -0.4999455685821873, 'Cl': -459.699376891376, 
+        'O': -75.00060746878006, 'F': -99.6621933325184, 'N': -54.527766712621954
     },
 
     'g03_pbepbe_6-311++g_d_p': {
