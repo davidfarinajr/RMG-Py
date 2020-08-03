@@ -273,6 +273,17 @@ class ArkaneSpecies(RMGObject):
             content = f.read()
         content = replace_yaml_syntax(content, label)
         data = yaml.safe_load(stream=content)
+
+        # remove old identifier and propery keys
+        if 'Identifiers' in data:
+            for key,value in data["Identifiers"].items():
+                data[key] = value
+            data.pop("Identifiers")
+        if 'Properties' in data:
+            for key,value in data["Properties"].items():
+                data[key] = value
+            data.pop("Properties")
+
         if label:
             # First, warn the user if the label doesn't match
             try:
@@ -297,10 +308,10 @@ class ArkaneSpecies(RMGObject):
             freq_data = data['imaginary_frequency']
             del data['imaginary_frequency']
         if not data['is_ts']:
-            if 'smiles' in data:
-                data['species'] = Species(smiles=data['smiles'])
-            elif 'adjacency_list' in data:
+            if 'adjacency_list' in data:
                 data['species'] = Species().from_adjacency_list(data['adjacency_list'])
+            elif 'smiles' in data:
+                data['species'] = Species(smiles=data['smiles'])
             elif 'inchi' in data:
                 data['species'] = Species(inchi=data['inchi'])
             else:
@@ -364,8 +375,8 @@ def is_pdep(job_list):
 def check_conformer_energy(energies, path):
     """
     Check to see that the starting energy of the species in the potential energy scan calculation
-    is not 0.5 kcal/mol (or more) higher than any other energies in the scan. If so, print and 
-    log a warning message.  
+    is not 0.5 kcal/mol (or more) higher than any other energies in the scan. If so, print and
+    log a warning message.
     """
     energies = np.array(energies, np.float64)
     e_diff = (energies[0] - np.min(energies)) * constants.E_h * constants.Na / 1000
