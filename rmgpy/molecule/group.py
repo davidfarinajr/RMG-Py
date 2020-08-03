@@ -515,7 +515,7 @@ class GroupAtom(Vertex):
 
     def is_fluorine(self):
         """
-        Return ``True`` if the atom represents an sulfur atom or ``False`` if not.
+        Return ``True`` if the atom represents an fluorine atom or ``False`` if not.
         """
         all_fluorine = [ATOMTYPES['F']] + ATOMTYPES['F'].specific
         check_list = [x in all_fluorine for x in self.atomtype]
@@ -523,7 +523,7 @@ class GroupAtom(Vertex):
 
     def is_chlorine(self):
         """
-        Return ``True`` if the atom represents an sulfur atom or ``False`` if not.
+        Return ``True`` if the atom represents an chlorine atom or ``False`` if not.
         """
         all_chlorine = [ATOMTYPES['Cl']] + ATOMTYPES['Cl'].specific
         check_list = [x in all_chlorine for x in self.atomtype]
@@ -531,9 +531,9 @@ class GroupAtom(Vertex):
 
     def is_bromine(self):
         """
-        Return ``True`` if the atom represents an sulfur atom or ``False`` if not.
+        Return ``True`` if the atom represents a bromine atom or ``False`` if not.
         """
-        all_bromine = [ATOMTYPES['C']] + ATOMTYPES['C'].specific
+        all_bromine = [ATOMTYPES['Br']] + ATOMTYPES['Br'].specific
         check_list = [x in all_bromine for x in self.atomtype]
         return all(check_list)
 
