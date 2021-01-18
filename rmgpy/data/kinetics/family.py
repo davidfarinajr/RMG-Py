@@ -2772,6 +2772,7 @@ class KineticsFamily(Database):
             for labeled_molecule in labeled_products:
                 if species.is_isomorphic(labeled_molecule, save_order=self.save_order):
                     species.molecule = [labeled_molecule]
+                    labeled_molecule.reactive = True
                     reaction.products[index] = species
                     labeled_products.remove(labeled_molecule)
                     break
@@ -2782,6 +2783,7 @@ class KineticsFamily(Database):
             for labeled_molecule in labeled_reactants:
                 if species.is_isomorphic(labeled_molecule, save_order=self.save_order):
                     species.molecule = [labeled_molecule]
+                    labeled_molecule.reactive = True
                     reaction.reactants[index] = species
                     labeled_reactants.remove(labeled_molecule)
                     break
